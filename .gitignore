@@ -1,2 +1,13 @@
 nvim/
-secrets/.secrets
+secrets/
+enchant/
+fish/
+git/
+gramps/
+gtk-2.0/
+iterm2/
+karabiner/
+old_nvim/
+pulse/
+qBittorrent/
+zshrc/
