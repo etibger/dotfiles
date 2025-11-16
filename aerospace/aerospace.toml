@@ -53,6 +53,10 @@ if.app-name-regex-substring = 'preview'
 run = 'layout floating'
 
 [[on-window-detected]]
+if.app-name-regex-substring = 'calendar'
+run = 'layout floating'
+
+[[on-window-detected]]
 if.app-name-regex-substring = 'safari'
 run = 'layout floating'
 
