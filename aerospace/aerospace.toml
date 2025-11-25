@@ -147,6 +147,10 @@ preset = 'qwerty'
     alt-cmd-ctrl-7 = 'workspace 7'
     alt-cmd-ctrl-8 = 'workspace 8'
     alt-cmd-ctrl-9 = 'workspace 9'
+    alt-cmd-ctrl-q = 'workspace 11'
+    alt-cmd-ctrl-w = 'workspace 12'
+    alt-cmd-ctrl-e = 'workspace 13'
+    alt-cmd-ctrl-r = 'workspace 14'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
     alt-shift-ctrl-1 = 'move-node-to-workspace 1'
@@ -158,8 +162,10 @@ preset = 'qwerty'
     alt-shift-ctrl-7 = 'move-node-to-workspace 7'
     alt-shift-ctrl-8 = 'move-node-to-workspace 8'
     alt-shift-ctrl-9 = 'move-node-to-workspace 9'
-    
-    
+    alt-shift-ctrl-q = 'move-node-to-workspace 11'
+    alt-shift-ctrl-w = 'move-node-to-workspace 12'
+    alt-shift-ctrl-e = 'move-node-to-workspace 13'
+    alt-shift-ctrl-r = 'move-node-to-workspace 14'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
     alt-cmd-ctrl-tab = 'workspace-back-and-forth'
