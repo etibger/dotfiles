@@ -4,8 +4,8 @@ format = """
 [](color_red)\
 $os\
 [](bg:color_orange fg:color_red)\
-$hostname\
 $username\
+$hostname\
 [](bg:color_yellow fg:color_orange)\
 $directory\
 [](fg:color_yellow bg:color_aqua)\
@@ -52,7 +52,7 @@ style = "bg:color_red fg:color_fg0"
 
 [hostname]
 style = "bg:color_orange fg:color_fg0"
-format ='[$hostname]($style)'
+format ='[@$hostname]($style)'
 
 
 [os.symbols]
@@ -82,7 +82,7 @@ Pop = ""
 show_always = true
 style_user = "bg:color_orange fg:color_fg0"
 style_root = "bg:color_orange fg:color_fg0"
-format = '[ $user ]($style)'
+format = '[$user]($style)'
 
 [directory]
 style = "fg:color_fg0 bg:color_yellow"
