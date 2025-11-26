@@ -1,8 +1,10 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
 format = """
-[](color_orange)\
+[](color_red)\
 $os\
+[](bg:color_orange fg:color_red)\
+$hostname\
 $username\
 [](bg:color_yellow fg:color_orange)\
 $directory\
@@ -45,8 +47,13 @@ color_yellow = '#d79921'
 
 [os]
 disabled = false
-format = '[$name$symbol]($style)'
+format = '[$symbol]($style)'
+style = "bg:color_red fg:color_fg0"
+
+[hostname]
 style = "bg:color_orange fg:color_fg0"
+format ='[$hostname]($style)'
+
 
 [os.symbols]
 Windows = "󰍲"
