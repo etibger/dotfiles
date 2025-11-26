@@ -45,6 +45,7 @@ color_yellow = '#d79921'
 
 [os]
 disabled = false
+format = '[$name$symbol]($style)'
 style = "bg:color_orange fg:color_fg0"
 
 [os.symbols]
