@@ -90,27 +90,28 @@ config.keys = {
 		mods = "LEADER|SHIFT",
 		action = act.CloseCurrentTab({ confirm = true }),
 	},
+	-- I prefer moving between tmux panes change it to Hyper+hjkl
 	-- CTRL + (h,j,k,l) to move between panes
-	{
-		key = "h",
-		mods = "CTRL",
-		action = act({ EmitEvent = "move-left" }),
-	},
-	{
-		key = "j",
-		mods = "CTRL",
-		action = act({ EmitEvent = "move-down" }),
-	},
-	{
-		key = "k",
-		mods = "CTRL",
-		action = act({ EmitEvent = "move-up" }),
-	},
-	{
-		key = "l",
-		mods = "CTRL",
-		action = act({ EmitEvent = "move-right" }),
-	},
+	-- {
+	-- 	key = "h",
+	-- 	mods = "CTRL",
+	-- 	action = act({ EmitEvent = "move-left" }),
+	-- },
+	-- {
+	-- 	key = "j",
+	-- 	mods = "CTRL",
+	-- 	action = act({ EmitEvent = "move-down" }),
+	-- },
+	-- {
+	-- 	key = "k",
+	-- 	mods = "CTRL",
+	-- 	action = act({ EmitEvent = "move-up" }),
+	-- },
+	-- {
+	-- 	key = "l",
+	-- 	mods = "CTRL",
+	-- 	action = act({ EmitEvent = "move-right" }),
+	-- },
 	-- ALT + (h,j,k,l) to resize panes
 	{
 		key = "h",
