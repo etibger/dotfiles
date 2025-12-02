@@ -137,7 +137,7 @@ config.keys = {
 	-- Vertical split
 	{
 		-- |
-		key = "/",
+		key = "\\",
 		mods = "LEADER",
 		action = act.SplitPane({
 			direction = "Right",
