@@ -19,8 +19,6 @@ config.window_close_confirmation = "NeverPrompt"
 config.adjust_window_size_when_changing_font_size = false
 config.window_decorations = "RESIZE"
 config.check_for_updates = false
-config.use_fancy_tab_bar = false
-config.tab_bar_at_bottom = true
 config.font_size = 18
 config.font = wezterm.font("JetBrains Mono", { weight = "Bold" })
 -- Find the nicest font possible
@@ -209,12 +207,94 @@ config.keys = {
 		action = act({ EmitEvent = "restore_session" }),
 	},
 }
+
+-- Put the tab bar at the bottom
+config.tab_bar_at_bottom = true
+
+-- Make the tab bar look cleaner
+config.use_fancy_tab_bar = false
+config.hide_tab_bar_if_only_one_tab = false
+-- Custom tab formatting
+config.tab_max_width = 40
+
+-- The filled in variant of the < symbol
+local SOLID_LEFT_ARROW = wezterm.nerdfonts.pl_right_hard_divider
+
+-- The filled in variant of the > symbol
+local SOLID_RIGHT_ARROW = wezterm.nerdfonts.pl_left_hard_divider
+
+-- This function returns the suggested title for a tab.
+-- It prefers the title that was set via `tab:set_title()`
+-- or `wezterm cli set-tab-title`, but falls back to the
+-- title of the active pane in that tab.
+function tab_title(tab_info)
+	local title = tab_info.tab_title
+	-- if the tab title is explicitly set, take that
+	if title and #title > 0 then
+		return tab_info.tab_index .. ":" .. title
+	end
+	-- Otherwise, use the title from the active pane
+	-- in that tab
+	return tab_info.active_pane.title
+end
+
+wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_width)
+	local edge_background = "#313244"
+	local background = "#313244"
+	local foreground = "#cdd6f4"
+
+	if tab.is_active then
+		-- I use a solarized dark theme; this gives a teal background to the active tab
+		foreground = "#073642"
+		background = "#2aa198"
+	elseif hover then
+		background = "#45475a"
+		foreground = "#f5e0dc"
+	end
+
+	local edge_foreground = background
+
+	local ICONS = {
+		MAC = "󰀵 ",
+		UBUNTU = "󰕈 ",
+		VM = "󰌽 ",
+		EUHPC = "󱄛 ",
+	}
+
+	local ttitle = tab_title(tab)
+	-- 1. Split using pattern match
+	local after_colon = ttitle:match("^[^:]*:(.*)$")
+
+	-- 2. Remove all whitespace
+	local cleaned = after_colon and after_colon:gsub("%s+", "") or ""
+	local title = ICONS[cleaned] .. ttitle .. "<" .. #panes .. ">"
+
+	-- ensure that the titles fit in the available space,
+	-- and that we have room for the edges.
+	title = wezterm.truncate_right(title, max_width - 2)
+
+	return {
+		{ Background = { Color = edge_background } },
+		{ Foreground = { Color = edge_foreground } },
+		{ Text = SOLID_LEFT_ARROW },
+		{ Background = { Color = background } },
+		{ Foreground = { Color = foreground } },
+		{ Text = title },
+		{ Background = { Color = edge_background } },
+		{ Foreground = { Color = edge_foreground } },
+		{ Text = SOLID_RIGHT_ARROW },
+	}
+end)
+
 config.colors = {
 	tab_bar = {
-		active_tab = {
-			-- I use a solarized dark theme; this gives a teal background to the active tab
-			fg_color = "#073642",
-			bg_color = "#2aa198",
+		new_tab = {
+			bg_color = "#313244",
+			fg_color = "#cdd6f4",
+		},
+		new_tab_hover = {
+			bg_color = "#45475a",
+			fg_color = "#f5e0dc",
 		},
 	},
 }
