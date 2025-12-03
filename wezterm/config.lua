@@ -90,28 +90,27 @@ config.keys = {
 		mods = "LEADER|SHIFT",
 		action = act.CloseCurrentTab({ confirm = true }),
 	},
-	-- I prefer moving between tmux panes change it to Hyper+hjkl
-	-- CTRL + (h,j,k,l) to move between panes
-	-- {
-	-- 	key = "h",
-	-- 	mods = "CTRL",
-	-- 	action = act({ EmitEvent = "move-left" }),
-	-- },
-	-- {
-	-- 	key = "j",
-	-- 	mods = "CTRL",
-	-- 	action = act({ EmitEvent = "move-down" }),
-	-- },
-	-- {
-	-- 	key = "k",
-	-- 	mods = "CTRL",
-	-- 	action = act({ EmitEvent = "move-up" }),
-	-- },
-	-- {
-	-- 	key = "l",
-	-- 	mods = "CTRL",
-	-- 	action = act({ EmitEvent = "move-right" }),
-	-- },
+	-- Hyper + (h,j,k,l) to move between panes
+	{
+		key = "h",
+		mods = "ALT|SHIFT|CTRL|SUPER",
+		action = act({ EmitEvent = "move-left" }),
+	},
+	{
+		key = "j",
+		mods = "ALT|SHIFT|CTRL|SUPER",
+		action = act({ EmitEvent = "move-down" }),
+	},
+	{
+		key = "k",
+		mods = "ALT|SHIFT|CTRL|SUPER",
+		action = act({ EmitEvent = "move-up" }),
+	},
+	{
+		key = "l",
+		mods = "ALT|SHIFT|CTRL|SUPER",
+		action = act({ EmitEvent = "move-right" }),
+	},
 	-- ALT + (h,j,k,l) to resize panes
 	{
 		key = "h",
@@ -232,7 +231,7 @@ function tab_title(tab_info)
 	local title = tab_info.tab_title
 	-- if the tab title is explicitly set, take that
 	if title and #title > 0 then
-		return tab_info.tab_index+1 .. ":" .. title
+		return tab_info.tab_index + 1 .. ":" .. title
 	end
 	-- Otherwise, use the title from the active pane
 	-- in that tab
@@ -287,6 +286,8 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
 	}
 end)
 
+-- config.color_scheme = "Japanesque"
+
 config.colors = {
 	tab_bar = {
 		new_tab = {
@@ -298,6 +299,12 @@ config.colors = {
 			fg_color = "#f5e0dc",
 		},
 	},
+	-- Colour of *all* pane split lines
+	split = "#ff5f5f",
+}
+config.inactive_pane_hsb = {
+	saturation = 0.9,
+	brightness = 0.4,
 }
 -- Switch to the last active tab when I close a tab
 config.switch_to_last_active_tab_when_closing_tab = true
@@ -305,11 +312,16 @@ config.switch_to_last_active_tab_when_closing_tab = true
 config.scrollback_lines = 5000
 -- I don't really have need for padding between panes
 config.window_padding = {
-	left = 0,
-	right = 0,
-	top = 0,
-	bottom = 0,
+	left = 6,
+	right = 6,
+	top = 4,
+	bottom = 4,
 }
+-- small extra padding inside the terminal cells for a “boxed” feel
+-- (this makes everything look less cramped, which makes the borders feel cleaner)
+-- config.line_height = 1.05
+-- config.cell_width = 0.95
+
 local move_around = function(window, pane, direction_wez, direction_nvim)
 	local result = os.execute(
 		"env NVIM_LISTEN_ADDRESS=/tmp/nvim"
