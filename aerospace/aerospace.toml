@@ -177,17 +177,24 @@ preset = 'qwerty'
     
     alt-g = 'exec-and-forget open -a /Applications/iTerm.app'
 
+# --- Home office monitors ---
 [workspace-to-monitor-force-assignment]
-    1 = 'main'
-    2 = 'main'
-    3 = 'main'
-    4 = 'main'
-    5 = 'main'
-    6 = 'built-in'
-    7 = 'built-in'
-    8 = 'built-in'
-    9 = 'built-in'
-    A = 'built-in'
+    1 = 'C34H89x'
+    2 = 'C34H89x'
+    3 = 'C34H89x'
+    4 = 'C34H89x'
+    5 = 'C34H89x'
+    6 = 'Built-in Retina Display'
+    7 = 'Built-in Retina Display'
+    8 = 'Built-in Retina Display'
+    9 = 'Built-in Retina Display'
+    A = 'Built-in Retina Display'
+    11 = 'SyncMaster'
+    12 = 'SyncMaster'
+    13 = 'SyncMaster'
+    14 = 'SyncMaster'
+    15 = 'SyncMaster'
+
 
 # 'service' binding mode declaration.
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
