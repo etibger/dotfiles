@@ -3,6 +3,9 @@ local wezterm = require("wezterm")
 local session_manager = require("wezterm-session-manager/session-manager")
 local act = wezterm.action
 local mux = wezterm.mux
+-- The art is a bit too bright and colorful to be useful as a backdrop
+-- for text, so we're going to dim it down to 10% of its normal brightness
+local dimmer = { brightness = 0.05 }
 
 local config = {}
 
@@ -421,4 +424,15 @@ config.hyperlink_rules = {
 		highlight = 1,
 	},
 }
+config.background = {
+	-- This is the deepest/back-most layer. It will be rendered first
+	{
+		source = {
+			File = "/Users/tibger01/.config/wezterm/kanagawa-wave.png",
+		},
+		repeat_x = "NoRepeat",
+		hsb = dimmer,
+	},
+}
+
 return config
