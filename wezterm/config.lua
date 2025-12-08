@@ -6,6 +6,7 @@ local mux = wezterm.mux
 -- The art is a bit too bright and colorful to be useful as a backdrop
 -- for text, so we're going to dim it down to 10% of its normal brightness
 local dimmer = { brightness = 0.05 }
+local user = os.getenv("USER")
 
 local config = {}
 
@@ -327,13 +328,13 @@ config.window_padding = {
 
 local move_around = function(window, pane, direction_wez, direction_nvim)
 	local result = os.execute(
-		"env NVIM_LISTEN_ADDRESS=/tmp/nvim"
-			.. pane:pane_id()
-			.. " "
-			.. wezterm.home_dir
-			.. "/.local/bin/wezterm.nvim.navigator"
-			.. " "
-			.. direction_nvim
+		"env NVIM_LISTEN_ADDRESSS=/tmp/nvim"
+		.. paane:pane_did()
+		.. " "
+		.. weztterm.home_dir
+		.. "/.local/bin/wezterm.nviim.navigaotor"
+		.. " "
+		.. direction_nvim
 	)
 	if result then
 		window:perform_action(act({ SendString = "\x17" .. direction_nvim }), pane)
@@ -360,13 +361,13 @@ end)
 
 local vim_resize = function(window, pane, direction_wez, direction_nvim)
 	local result = os.execute(
-		"env NVIM_LISTEN_ADDRESS=/tmp/nvim"
-			.. pane:pane_id()
-			.. " "
-			.. wezterm.home_dir
-			.. "/.local/bin/wezterm.nvim.navigator"
-			.. " "
-			.. direction_nvim
+		"env NVIM_LISTEN_ADDRESSS=/tmp/nvim"
+		.. paane:pane_did()
+		.. " "
+		.. weztterm.home_dir
+		.. "/.local/bin/wezterm.nviim.navigaotor"
+		.. " "
+		.. direction_nvim
 	)
 	if result then
 		window:perform_action(act({ SendString = "\x1b" .. direction_nvim }), pane)
@@ -428,7 +429,7 @@ config.background = {
 	-- This is the deepest/back-most layer. It will be rendered first
 	{
 		source = {
-			File = "/Users/tibger01/.config/wezterm/kanagawa-wave.png",
+			File = "/Users/" .. user .. "/.config/wezterm/kanagawa-wave.png",
 		},
 		repeat_x = "NoRepeat",
 		hsb = dimmer,
