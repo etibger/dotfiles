@@ -10,6 +10,7 @@ $hostname\
 $directory\
 [](fg:color_yellow bg:color_aqua)\
 $git_branch\
+$git_commit\
 $git_status\
 [](fg:color_aqua bg:color_blue)\
 $c\
@@ -101,6 +102,13 @@ truncation_symbol = "…/"
 symbol = ""
 style = "bg:color_aqua"
 format = '[[ $symbol $branch ](fg:color_fg0 bg:color_aqua)]($style)'
+
+[git_commit]
+commit_hash_length = 7
+tag_disabled = false
+tag_symbol = " "
+style = "bg:color_aqua"
+format = '[\($hash$tag\)]($style)'
 
 [git_status]
 style = "bg:color_aqua"
