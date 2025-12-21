@@ -40,7 +40,7 @@ wezterm.on("restore_session", function(window)
 end)
 
 config.leader = {
-	key = "a",
+	key = "g",
 	mods = "CTRL",
 	timeout_milliseconds = 2000,
 }
