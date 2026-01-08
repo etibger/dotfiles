@@ -263,7 +263,16 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
 		UBUNTU = "󰕈 ",
 		VM = "󰌽 ",
 		EUHPC = "󱄛 ",
+		EUHPC2 = " ",
 	}
+
+	-- Provide default icon for missing keys
+	local DEFAULT_ICON = "󰌽 "
+	setmetatable(ICONS, {
+	  __index = function(_, _)
+	    return DEFAULT_ICON
+	  end,
+	})
 
 	local ttitle = tab_title(tab)
 	-- 1. Split using pattern match
