@@ -322,7 +322,7 @@ config.inactive_pane_hsb = {
 -- Switch to the last active tab when I close a tab
 config.switch_to_last_active_tab_when_closing_tab = true
 
-config.scrollback_lines = 5000
+config.scrollback_lines = 10000
 -- I don't really have need for padding between panes
 config.window_padding = {
 	left = 6,
