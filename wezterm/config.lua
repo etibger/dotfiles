@@ -1,6 +1,5 @@
 local os = require("os")
 local wezterm = require("wezterm")
-local session_manager = require("wezterm-session-manager/session-manager")
 local act = wezterm.action
 local mux = wezterm.mux
 -- The art is a bit too bright and colorful to be useful as a backdrop
@@ -28,16 +27,6 @@ config.font = wezterm.font("JetBrains Mono", { weight = "Bold" })
 -- Find the nicest font possible
 --config.font = wezterm.font("MesloLGS Nerd Font Mono", { weight = "Bold" })
 config.enable_tab_bar = true
-
-wezterm.on("save_session", function(window)
-	session_manager.save_state(window)
-end)
-wezterm.on("load_session", function(window)
-	session_manager.load_state(window)
-end)
-wezterm.on("restore_session", function(window)
-	session_manager.restore_state(window)
-end)
 
 config.leader = {
 	key = "g",
