@@ -15,4 +15,9 @@ wezterm/wezterm-session-manager/
 dconf/
 nautilus/
 xfce4/
-
+evolution/
+gnome-initial-setup-done
+ibus/
+user-dirs.dirs
+user-dirs.locale
+yelp/
