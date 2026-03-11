@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -u
+
+CHECKMAKE="$HOME/.local/share/nvim/mason/bin/checkmake"
+FILE="$1"
+
+# Optional safety: if null-ls ever hands us a temp file named .null-ls_*_Makefile,
+# map it back to the real Makefile in that directory.
+if [[ "$(basename "$FILE")" == .null-ls_*_Makefile ]]; then
+  FILE="$(dirname "$FILE")/Makefile"
+fi
+
+# Emit only "file:line:col: rule: message" lines and drop the summary.
+"$CHECKMAKE" --format '{{.FileName}}:{{.LineNumber}}:1: {{.Rule}}: {{.Violation}}' "$FILE" 2>&1 \
+  | grep -v '^Error: violations found' || true
+
+exit 0
