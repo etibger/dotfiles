@@ -1,6 +1,5 @@
 local os = require("os")
 local wezterm = require("wezterm")
-local session_manager = require("wezterm-session-manager/session-manager")
 local act = wezterm.action
 local mux = wezterm.mux
 -- The art is a bit too bright and colorful to be useful as a backdrop
@@ -29,18 +28,8 @@ config.font = wezterm.font("JetBrains Mono", { weight = "Bold" })
 --config.font = wezterm.font("MesloLGS Nerd Font Mono", { weight = "Bold" })
 config.enable_tab_bar = true
 
-wezterm.on("save_session", function(window)
-	session_manager.save_state(window)
-end)
-wezterm.on("load_session", function(window)
-	session_manager.load_state(window)
-end)
-wezterm.on("restore_session", function(window)
-	session_manager.restore_state(window)
-end)
-
 config.leader = {
-	key = "a",
+	key = "g",
 	mods = "CTRL",
 	timeout_milliseconds = 2000,
 }
@@ -263,7 +252,17 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
 		UBUNTU = "󰕈 ",
 		VM = "󰌽 ",
 		EUHPC = "󱄛 ",
+		EUHPC2 = " ",
+		ProxMox = " ",
 	}
+
+	-- Provide default icon for missing keys
+	local DEFAULT_ICON = "󰌽 "
+	setmetatable(ICONS, {
+	  __index = function(_, _)
+	    return DEFAULT_ICON
+	  end,
+	})
 
 	local ttitle = tab_title(tab)
 	-- 1. Split using pattern match
@@ -313,7 +312,7 @@ config.inactive_pane_hsb = {
 -- Switch to the last active tab when I close a tab
 config.switch_to_last_active_tab_when_closing_tab = true
 
-config.scrollback_lines = 5000
+config.scrollback_lines = 10000
 -- I don't really have need for padding between panes
 config.window_padding = {
 	left = 6,
