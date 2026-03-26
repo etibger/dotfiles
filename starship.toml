@@ -179,9 +179,9 @@ format = '[[ $symbol( $version)( $environment) ](fg:color_fg0 bg:color_bg3)]($st
 
 [time]
 disabled = false
-time_format = "%R"
+time_format = " %Y-%m-%d  %H:%M"
 style = "bg:color_bg1"
-format = '[[  $time ](fg:color_fg0 bg:color_bg1)]($style)'
+format = '[[ $time ](fg:color_fg0 bg:color_bg1)]($style)'
 
 [line_break]
 disabled = false
