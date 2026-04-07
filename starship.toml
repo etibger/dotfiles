@@ -1,12 +1,14 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
 format = """
-[](color_red)\
+[](color_deep_red)\
 $os\
-[](bg:color_orange fg:color_red)\
+[](bg:color_orange fg:color_deep_red)\
 $username\
 $hostname\
-[](bg:color_yellow fg:color_orange)\
+[](bg:color_gold fg:color_orange)\
+$env_var\
+[](bg:color_yellow fg:color_gold)\
 $directory\
 [](fg:color_yellow bg:color_aqua)\
 $git_branch\
@@ -41,7 +43,9 @@ color_bg3 = '#665c54'
 color_blue = '#458588'
 color_aqua = '#689d6a'
 color_green = '#98971a'
-color_orange = '#d65d0e'
+color_gold = '#d65d0e'
+color_orange = '#BC6B15'
+color_deep_red= '#8F1814'
 color_purple = '#b16286'
 color_red = '#cc241d'
 color_yellow = '#d79921'
@@ -49,12 +53,16 @@ color_yellow = '#d79921'
 [os]
 disabled = false
 format = '[$symbol]($style)'
-style = "bg:color_red fg:color_fg0"
+style = "bg:color_deep_red fg:color_fg0"
 
 [hostname]
 style = "bg:color_orange fg:color_fg0"
 format ='[@$hostname]($style)'
 
+[env_var.LOCAL_PROJECT]
+variable = "LOCAL_PROJECT"
+style = "bg:color_gold fg:color_fg0"
+format = "[ $env_value ]($style)"
 
 [os.symbols]
 Windows = "󰍲"
@@ -76,8 +84,8 @@ Artix = "󰣇"
 EndeavourOS = ""
 CentOS = ""
 Debian = "󰣚"
-Redhat = "󱄛"
-RedHatEnterprise = "󱄛"
+Redhat = "󱄛 "
+RedHatEnterprise = "󱄛 "
 Pop = ""
 
 [username]
