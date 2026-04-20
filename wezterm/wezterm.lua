@@ -12,4 +12,6 @@ require("events")
 -- config.color_scheme = themes[selected_theme]
 config.color_scheme = 'Kanagawa (Gogh)'
 
+config.warn_about_missing_glyphs = false
+
 return config

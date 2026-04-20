@@ -23,9 +23,16 @@ config.adjust_window_size_when_changing_font_size = false
 config.window_decorations = "RESIZE"
 config.check_for_updates = false
 config.font_size = 18
-config.font = wezterm.font("JetBrains Mono", { weight = "Bold" })
+--config.font = wezterm.font("JetBrains Mono", { weight = "Bold" })
 -- Find the nicest font possible
 --config.font = wezterm.font("MesloLGS Nerd Font Mono", { weight = "Bold" })
+config.font = wezterm.font_with_fallback {
+  { family = "JetBrains Mono", weight = "Bold" },
+  "Noto Sans Symbols 2",
+  "Noto Sans Math",
+  "Symbols Nerd Font Mono",
+}
+
 config.enable_tab_bar = true
 
 config.leader = {
