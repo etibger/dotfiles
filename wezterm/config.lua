@@ -26,12 +26,12 @@ config.font_size = 18
 --config.font = wezterm.font("JetBrains Mono", { weight = "Bold" })
 -- Find the nicest font possible
 --config.font = wezterm.font("MesloLGS Nerd Font Mono", { weight = "Bold" })
-config.font = wezterm.font_with_fallback {
-  { family = "JetBrains Mono", weight = "Bold" },
-  "Noto Sans Symbols 2",
-  "Noto Sans Math",
-  "Symbols Nerd Font Mono",
-}
+config.font = wezterm.font_with_fallback({
+	{ family = "JetBrains Mono", weight = "Bold" },
+	"Noto Sans Symbols 2",
+	"Noto Sans Math",
+	"Symbols Nerd Font Mono",
+})
 
 config.enable_tab_bar = true
 
@@ -46,6 +46,11 @@ config.keys = {
 		key = ";",
 		mods = "LEADER",
 		action = act.ActivateCopyMode,
+	},
+	{
+		key = "q",
+		mods = "SUPER",
+		action = act.DisableDefaultAssignment,
 	},
 	{
 		key = "z",
@@ -266,9 +271,9 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
 	-- Provide default icon for missing keys
 	local DEFAULT_ICON = "󰌽 "
 	setmetatable(ICONS, {
-	  __index = function(_, _)
-	    return DEFAULT_ICON
-	  end,
+		__index = function(_, _)
+			return DEFAULT_ICON
+		end,
 	})
 
 	local ttitle = tab_title(tab)
@@ -335,12 +340,12 @@ config.window_padding = {
 local move_around = function(window, pane, direction_wez, direction_nvim)
 	local result = os.execute(
 		"env NVIM_LISTEN_ADDRESSS=/tmp/nvim"
-		.. paane:pane_did()
-		.. " "
-		.. weztterm.home_dir
-		.. "/.local/bin/wezterm.nviim.navigaotor"
-		.. " "
-		.. direction_nvim
+			.. paane:pane_did()
+			.. " "
+			.. weztterm.home_dir
+			.. "/.local/bin/wezterm.nviim.navigaotor"
+			.. " "
+			.. direction_nvim
 	)
 	if result then
 		window:perform_action(act({ SendString = "\x17" .. direction_nvim }), pane)
@@ -368,12 +373,12 @@ end)
 local vim_resize = function(window, pane, direction_wez, direction_nvim)
 	local result = os.execute(
 		"env NVIM_LISTEN_ADDRESSS=/tmp/nvim"
-		.. paane:pane_did()
-		.. " "
-		.. weztterm.home_dir
-		.. "/.local/bin/wezterm.nviim.navigaotor"
-		.. " "
-		.. direction_nvim
+			.. paane:pane_did()
+			.. " "
+			.. weztterm.home_dir
+			.. "/.local/bin/wezterm.nviim.navigaotor"
+			.. " "
+			.. direction_nvim
 	)
 	if result then
 		window:perform_action(act({ SendString = "\x1b" .. direction_nvim }), pane)
