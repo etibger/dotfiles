@@ -75,13 +75,8 @@ if [[ -x $MAMBA_EXE ]]; then
   unset __mamba_setup
 fi
 
-alias ls='eza --icons'
-alias ll='ls -la'
-alias cddrage='cd "$HOME/Projects/Drage"'
-alias oai='eval "$(micromamba shell hook --shell zsh)" && micromamba activate oai && set_cert'
-alias screensaver='cmatrix -ba -u 3 -C red'
-alias brew_up='brew update && brew upgrade && brew upgrade --cask && brew cleanup -s && rm -rf "$(brew --cache)"'
-alias rebuild_nvim='make CMAKE_BUILD_TYPE=Release CMAKE_INSTALL_PREFIX="$HOME" install'
+source "${XDG_CONFIG_HOME:-$HOME/.config}/zshrc/aliases.zsh"
+[[ -r "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
 
 bindkey -v
 bindkey -M viins 'jk' vi-cmd-mode

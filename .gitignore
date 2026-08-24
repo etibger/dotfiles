@@ -12,6 +12,7 @@ pulse/
 qBittorrent/
 zshrc/*
 !zshrc/.zshrc
+!zshrc/aliases.zsh
 !zshrc/README.md
 wezterm/wezterm-session-manager/
 dconf/
@@ -20,4 +21,3 @@ xfce4/
 arm-eap/
 github-copilot/
 tigervnc/
-

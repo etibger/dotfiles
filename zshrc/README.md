@@ -28,6 +28,15 @@ brew install \
 Zsh is included with macOS. The `rebuild_nvim` alias also expects `make` from
 the Xcode Command Line Tools and a Neovim source checkout at `$HOME/neovim`.
 
+## Files
+
+| File | Purpose | Tracked |
+| --- | --- | --- |
+| `.zshrc` | Environment, tool initialization, completion, and key bindings | Yes |
+| `aliases.zsh` | Reusable aliases | Yes |
+| `~/.zshrc.local` | Machine-specific aliases and settings | No |
+| `~/.zshrc.secrets` | Credentials and secret-dependent aliases | No |
+
 ## Dependencies
 
 | Tool | Purpose | Behavior when missing |
@@ -40,7 +49,7 @@ the Xcode Command Line Tools and a Neovim source checkout at `$HOME/neovim`.
 | Carapace | Multi-shell command completion | Carapace completion is skipped |
 | Starship | Prompt | Zsh uses its existing prompt |
 | uv | Zsh completion for uv commands | uv completion is skipped |
-| micromamba | Mamba initialization and the `oai` alias | Mamba setup and `oai` will not work |
+| micromamba | Mamba initialization and private environment aliases | Mamba setup and those aliases will not work |
 | eza | Implementation of the `ls` and `ll` aliases | Those aliases fail when invoked |
 | cmatrix | `screensaver` alias | That alias fails when invoked |
 | GNU grep and GNU sed | GNU-compatible tools placed first in `PATH` | System implementations remain available |
@@ -63,8 +72,8 @@ setup to `~/.zshrc` without modifying the tracked file.
 
 ## Secrets
 
-Private environment variables and aliases belong in `~/.zshrc.secrets`. The
-tracked configuration sources this file when it exists:
+Private environment variables and secret-dependent aliases belong in
+`~/.zshrc.secrets`. The tracked configuration sources this file when it exists:
 
 ```zsh
 export SERVICE_API_KEY="replace-with-a-real-key"
@@ -77,6 +86,12 @@ chmod 600 "$HOME/.zshrc.secrets"
 ```
 
 The secrets file lives outside this repository and must not be committed.
+
+Machine-specific, non-secret settings belong in `~/.zshrc.local`. For example:
+
+```zsh
+alias project='cd "$HOME/Projects/example"'
+```
 
 ## History
 

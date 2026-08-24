@@ -1,0 +1,5 @@
+alias ls='eza --icons'
+alias ll='ls -la'
+alias screensaver='cmatrix -ba -u 3 -C red'
+alias brew_up='brew update && brew upgrade && brew upgrade --cask && brew cleanup -s && rm -rf "$(brew --cache)"'
+alias rebuild_nvim='make CMAKE_BUILD_TYPE=Release CMAKE_INSTALL_PREFIX="$HOME" install'
