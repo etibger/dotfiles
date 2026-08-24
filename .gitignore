@@ -10,7 +10,9 @@ karabiner/
 old_nvim/
 pulse/
 qBittorrent/
-zshrc/
+zshrc/*
+!zshrc/.zshrc
+!zshrc/README.md
 wezterm/wezterm-session-manager/
 dconf/
 nautilus/
@@ -18,5 +20,4 @@ xfce4/
 arm-eap/
 github-copilot/
 tigervnc/
-
 
