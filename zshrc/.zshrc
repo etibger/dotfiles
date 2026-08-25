@@ -34,6 +34,7 @@ SAVEHIST=10000
 unset LESS
 
 [[ -r "$HOME/.zshrc.secrets" ]] && source "$HOME/.zshrc.secrets"
+[[ -r "$HOME/.config/secrets/.secrets.zsh" ]] && source "$HOME/.config/secrets/.secrets.zsh"
 
 autoload -Uz compinit
 compinit
@@ -62,6 +63,9 @@ fi
 if (( $+commands[uv] )); then
   eval "$(uv generate-shell-completion zsh)"
 fi
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
 export MAMBA_EXE=/opt/homebrew/opt/micromamba/bin/mamba
 export MAMBA_ROOT_PREFIX="$HOME/mamba"
