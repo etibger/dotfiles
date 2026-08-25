@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# Refuse to answer host-key confirmations or other unexpected SSH prompts.
+case ${1-} in
+  *[Pp]assword*) ;;
+  *) exit 1 ;;
+esac
+
+exec /usr/bin/security find-generic-password \
+  -a tibger01 \
+  -s com.arm.ssh.tibger01 \
+  -w
