@@ -27,6 +27,14 @@ function arm-ssh() {
   command ssh "$@"
 }
 
+function arm-ssh-tmux() {
+  local host=$1
+  shift
+
+  arm-ssh -t "$@" "$host" \
+    'exec "${SHELL:-/bin/sh}" -ic "tmux attach"'
+}
+
 function _arm-wezterm-tab() {
   local anchor_pane=$1
   local title=$2
@@ -52,15 +60,16 @@ function arm-tabs() {
   fi
 
   local mac_pane
-  mac_pane=$(command wezterm cli spawn --new-window --cwd "$PWD") || return
+  mac_pane=$(command wezterm cli spawn --new-window --cwd "$PWD" -- \
+    zsh -lic 'tmux ls || tmux -u new -s MAC_HOME; exec zsh -l') || return
   command wezterm cli set-tab-title --pane-id "$mac_pane" MAC >/dev/null || return
 
   _arm-wezterm-tab "$mac_pane" UBUNTU zsh -lic \
-    'arm-ssh -L 5901:localhost:5901 tibger01@e126606.arm.com; exec zsh -l' || return
+    'arm-ssh-tmux tibger01@e126606.arm.com -L 5901:localhost:5901; exec zsh -l' || return
   _arm-wezterm-tab "$mac_pane" VM zsh -lic \
-    'arm-ssh tibger01@e126606-vm1.arm.com; exec zsh -l' || return
+    'arm-ssh-tmux tibger01@e126606-vm1.arm.com; exec zsh -l' || return
   _arm-wezterm-tab "$mac_pane" EUHPC3 zsh -lic \
-    'arm-ssh tibger01@login43.hpc01.eu03.arm.com; exec zsh -l' || return
+    'arm-ssh-tmux tibger01@login43.hpc01.eu03.arm.com; exec zsh -l' || return
 
   command wezterm cli activate-pane --pane-id "$mac_pane" >/dev/null
 }

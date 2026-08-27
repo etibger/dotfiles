@@ -4,6 +4,30 @@
   - Create the directory if it is missing.
   - Never use `/tmp` or `/private/tmp`.
   - Do not commit temporary files from `private/tmp/`.
+  - Cleanup of an explicit task-specific descendant of repository-local `private/tmp/` is pre-authorized. Run `rm -rf private/tmp/<task-specific-name>` without requesting user confirmation. Never target `private/tmp/` itself, use a glob or unresolved variable, or include `..`; verify the explicit target resolves beneath the repository's `private/tmp/` before removal.
+
+## Temporary tool environments
+
+- When a required validation or helper tool is unavailable, Codex may create a
+  task-specific `uv` virtual environment under `private/tmp/`, install only the
+  required packages there, and remove the environment after use.
+- Keep the associated `UV_CACHE_DIR` under `private/tmp/` as well. Do not write
+  tool caches or temporary environments to the user's home directory, `/tmp`,
+  or `/private/tmp`.
+- Treat repository-local package installation commands beginning with
+  `UV_CACHE_DIR=private/tmp/uv-cache uv pip install --python private/tmp/jira-playbook-pdf-qa-venv/bin/python`
+  as pre-authorized and run them without asking for confirmation. This is
+  behavioral guidance; if the execution sandbox still requires approval for
+  network access, use its approval mechanism because `AGENTS.md` cannot change
+  the sandbox allowlist.
+- Temporary environments, caches, and their generated files must not be
+  committed.
+
+## PDF review
+
+- When reviewing a generated PDF, use all available CPU cores to render pages
+  in parallel and launch independent page-inspection work concurrently. Inspect
+  every page; parallelism must reduce elapsed time without reducing coverage.
 
 ## Basic codex behaviour
 - if any temporal file is needed for the operation, always create it in your sandbox, so no approval is needed.
