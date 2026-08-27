@@ -63,17 +63,39 @@ fi
 formal_dir="$worktree/verification/formal/fb_tex_flt"
 task_dir="$worktree/private/tmp/jaspergold-rhel8-fpv/$run_id"
 wrapper="$task_dir/stop_on_first_cex_vcd.tcl"
+report_tool="$task_dir/summarize_fpv_results.py"
+report_venv="$task_dir/report-venv"
+report_uv_cache="$task_dir/uv-cache"
+report_python="$report_venv/bin/python"
 run_work="$task_dir/work"
 log="$task_dir/run.log"
 
 [[ -f $formal_dir/sourceme ]] || { printf 'Missing formal sourceme.\n' >&2; exit 1; }
 [[ -f $wrapper ]] || { printf 'Missing first-CEX wrapper: %s\n' "$wrapper" >&2; exit 1; }
-mkdir -p "$run_work"
+[[ -f $report_tool ]] || { printf 'Missing FPV report tool: %s\n' "$report_tool" >&2; exit 1; }
+mkdir -p "$run_work" "$report_uv_cache"
 
 cd "$formal_dir"
 set +u
 source ./sourceme
 set -u
+
+command -v uv >/dev/null || {
+  printf 'Missing uv after sourcing the formal environment.\n' >&2
+  exit 1
+}
+command -v python3.12 >/dev/null || {
+  printf 'Missing repository-standard python3.12 after sourcing the formal environment.\n' >&2
+  exit 1
+}
+if [[ ! -x $report_python ]]; then
+  UV_CACHE_DIR="$report_uv_cache" uv venv "$report_venv" \
+    --python python3.12 --no-python-downloads
+fi
+[[ $($report_python -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")') == 3.12 ]] || {
+  printf 'FPV report environment is not Python 3.12: %s\n' "$report_python" >&2
+  exit 1
+}
 
 if [[ -n $config_fragment ]]; then
   config_fragment=$(realpath "$config_fragment")
@@ -104,6 +126,8 @@ printf 'FPV_PROOF_LIMIT=%s\n' "$proof_limit"
 printf 'FPV_RUN_DIR=%s\n' "$run_work"
 printf 'FPV_CONFIG_FRAGMENT=%s\n' "${config_fragment:-NONE}"
 printf 'FPV_CEX_PROPERTY_GLOB=%s\n' "${cex_property_glob:-FIRST_CEX}"
+printf 'FPV_REPORT_PYTHON=%s\n' "$report_python"
+printf 'FPV_REPORT_UV_CACHE=%s\n' "$report_uv_cache"
 
 cd "$run_work"
 set +e
@@ -114,6 +138,18 @@ set -e
 
 printf 'FTRUN_STATUS=%s\n' "$run_status"
 printf 'RUN_LOG=%s\n' "$log"
+proof_dir="$run_work/fts_run_$target"
+report_status=0
+"$report_python" "$report_tool" \
+  --input "$proof_dir/proof_report.json" \
+  --text-output "$proof_dir/fpv_property_summary.rpt" \
+  --json-output "$proof_dir/fpv_property_summary.json" \
+  --ftrun-status "$run_status" || report_status=$?
+printf 'FPV_REPORT_STATUS=%s\n' "$report_status"
 rg --files "$run_work" -g '*.vcd' -g '*.rpt' -g 'verification_results.json' \
-  -g 'proof_report.json' -g 'run.cmd' -g 'args.json' || true
-exit "$run_status"
+  -g 'proof_report.json' -g 'fpv_property_summary.json' \
+  -g 'run.cmd' -g 'args.json' || true
+if (( run_status != 0 )); then
+  exit "$run_status"
+fi
+exit "$report_status"

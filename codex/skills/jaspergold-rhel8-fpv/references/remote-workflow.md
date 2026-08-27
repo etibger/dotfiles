@@ -1,5 +1,24 @@
 # Remote fb_tex_flt workflow
 
+## Standard entrypoint
+
+Use the installed fixed-purpose entrypoint for ordinary runs:
+
+```sh
+/Users/tibger01/.config/codex/skills/jaspergold-rhel8-fpv/scripts/run_remote_fpv.sh \
+  --commit <current-HEAD-sha> --jobs 6 --proof-limit 30m
+```
+
+Invoke the path directly so the narrow execution-policy prefix matches. The
+script performs the preflight, minimal candidate transfer, isolated setup,
+staging, foreground proof, property reporting, artifact collection, and
+guarded cleanup described below. Its `--dry-run` mode performs local validation
+and prints the plan without contacting `rhel8-VM`.
+
+The remaining sections document what the wrapper enforces and provide a manual
+recovery path. Do not replace the standard entrypoint with individual commands
+unless recovery or an explicitly authorized intentional-CEX trial requires it.
+
 ## Preflight
 
 1. Confirm `ssh -o BatchMode=yes rhel8-VM true`.
@@ -22,13 +41,17 @@ Create only the task-specific remote directory below the isolated worktree:
 <worktree>/private/tmp/jaspergold-rhel8-fpv/<run-id>/
 ```
 
-Copy these two files into it:
+Copy these three files into it:
 
 - `jaspergold-local-fpv/assets/stop_on_first_cex_vcd.tcl`
 - `jaspergold-rhel8-fpv/scripts/run_fpv.sh`
+- `jaspergold-rhel8-fpv/scripts/summarize_fpv_results.py`
 
 The proof output is created below `<run-id>/work/fts_run_<target>/`; `run.log`
-is written beside `work/`.
+is written beside `work/`. The runner also creates the report-only
+`<run-id>/report-venv` with `uv --python python3.12` and keeps its uv cache in
+`<run-id>/uv-cache`. This mirrors the repository's Python 3.12 pinning used by
+`design/shared/pythonenv` without relying on RHEL8's older system Python.
 
 ## Execute and monitor
 
@@ -45,6 +68,15 @@ the effective run limit, proof start, resource kills, first CEX shutdown, final
 reporting, VCD export, and JDB save. A nonzero FTRun result can be the expected
 property failure; classify it from reports and logs rather than the exit code
 alone.
+
+As the final remote stage, `run_fpv.sh` parses `proof_report.json`, prints the
+aggregate property totals, and writes `fpv_property_summary.rpt` plus
+`fpv_property_summary.json` beside the proof report. Require both files before
+calling the run complete. The summary distinguishes assertion passes, CEXs,
+errors and unresolved assertions from covered, unreachable and unresolved
+covers; do not collapse those categories into one ambiguous pass/fail number.
+Confirm `FPV_REPORT_PYTHON` points below the task directory and reports Python
+3.12. Do not invoke the summary with unqualified `python3` on RHEL8.
 
 ## Trial-only intentional CEX
 

@@ -6,7 +6,7 @@
   - Create the required directories if they are missing.
   - Never use `/tmp` or `/private/tmp`.
   - Do not commit temporary files from `private/tmp/`.
-  - Cleanup of an explicit task-specific directory under repository-local `private/tmp/to_clean/` or `private/tmp/to_persist/` is pre-authorized. Run `rm -rf private/tmp/to_clean/<task-specific-name>` during work, or `rm -rf private/tmp/to_persist/<task-specific-name>` only at the end of the work, without requesting user confirmation. Never target `private/tmp/`, `private/tmp/to_clean/`, or `private/tmp/to_persist/` themselves, use a glob or unresolved variable, or include `..`; verify the explicit target resolves beneath the appropriate repository-local directory before removal.
+  - Cleanup of an explicit task-specific directory under repository-local `private/tmp/to_clean/` or `private/tmp/to_persist/` is pre-authorized. Invoke `/Users/tibger01/.config/codex/bin/cleanup-repo-task-tmp.sh --kind to_clean --task <task-specific-name>` during work, or use `--kind to_persist` only at the end of the work. Invoke the wrapper directly from inside the owning Git repository so its execution-policy rule matches; do not prefix it with a shell or `env`. Never target `private/tmp/`, `private/tmp/to_clean/`, or `private/tmp/to_persist/` themselves, use a glob or unresolved variable, or include `..`. The wrapper must verify that the explicit direct child resolves beneath the appropriate repository-local directory before removal.
 
 ## Temporary tool environments
 
@@ -26,6 +26,17 @@
   the sandbox allowlist.
 - Temporary environments, caches, and their generated files must not be
   committed.
+
+## Persistent Codex tool environments
+
+- Reuse `/Users/tibger01/.local/share/codex/venvs/skill-validator` for Codex
+  skill validation. It contains Python 3.12 and PyYAML; do not create a
+  task-specific virtual environment merely to run `quick_validate.py`.
+- Run the validator as:
+  `/Users/tibger01/.local/share/codex/venvs/skill-validator/bin/python /Users/tibger01/.codex/skills/.system/skill-creator/scripts/quick_validate.py <skill-directory>`.
+- Keep this environment narrowly scoped to stable, reusable Codex
+  administration tools. Project-specific or task-specific packages still
+  belong in repository-local temporary environments.
 
 ## PDF review
 
