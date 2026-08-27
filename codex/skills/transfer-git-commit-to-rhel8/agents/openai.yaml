@@ -1,0 +1,4 @@
+interface:
+  display_name: "Transfer Git Commit to RHEL8"
+  short_description: "Transfer one committed candidate to RHEL8"
+  default_prompt: "Use $transfer-git-commit-to-rhel8 to transfer the current committed HEAD to the configured RHEL8 host."

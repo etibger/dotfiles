@@ -1,0 +1,119 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+worktree=
+run_id=
+target=tex_flt
+jobs=6
+proof_limit=30m
+prove_task=prj_prove_all
+config_fragment=
+cex_property_glob=
+
+usage() {
+  printf 'Usage: %s --worktree PATH --run-id ID [--target NAME] [--jobs N] [--proof-limit 30m] [--config-fragment YAML] [--cex-property-glob GLOB]\n' "$0" >&2
+}
+
+while (($#)); do
+  case "$1" in
+    --worktree) worktree=${2:?missing value}; shift 2 ;;
+    --run-id) run_id=${2:?missing value}; shift 2 ;;
+    --target) target=${2:?missing value}; shift 2 ;;
+    --jobs) jobs=${2:?missing value}; shift 2 ;;
+    --proof-limit) proof_limit=${2:?missing value}; shift 2 ;;
+    --prove-task) prove_task=${2:?missing value}; shift 2 ;;
+    --config-fragment) config_fragment=${2:?missing value}; shift 2 ;;
+    --cex-property-glob) cex_property_glob=${2:?missing value}; shift 2 ;;
+    -h|--help) usage; exit 0 ;;
+    *) usage; printf 'Unknown argument: %s\n' "$1" >&2; exit 2 ;;
+  esac
+done
+
+[[ $worktree =~ ^/home/tibger01/projects/fornjot/tmp_gpu_fpv_run_[0-9a-f]{12}$ ]] || {
+  printf 'Rejected worktree: %s\n' "$worktree" >&2
+  exit 2
+}
+[[ $run_id =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]] || {
+  printf 'Rejected run ID: %s\n' "$run_id" >&2
+  exit 2
+}
+[[ $target =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]] || {
+  printf 'Rejected target: %s\n' "$target" >&2
+  exit 2
+}
+[[ $prove_task =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]] || {
+  printf 'Rejected prove task: %s\n' "$prove_task" >&2
+  exit 2
+}
+[[ $jobs =~ ^[1-9][0-9]*$ && $jobs -le 64 ]] || {
+  printf 'Jobs must be an integer from 1 to 64.\n' >&2
+  exit 2
+}
+[[ $proof_limit =~ ^[1-9][0-9]*(s|m|h)$ ]] || {
+  printf 'Proof limit must be a positive duration such as 60s, 10m, or 2h.\n' >&2
+  exit 2
+}
+if [[ -n $cex_property_glob ]]; then
+  [[ $cex_property_glob =~ ^[A-Za-z0-9_.*?:/-]+$ ]] || {
+    printf 'Rejected CEX property glob.\n' >&2
+    exit 2
+  }
+fi
+
+formal_dir="$worktree/verification/formal/fb_tex_flt"
+task_dir="$worktree/private/tmp/jaspergold-rhel8-fpv/$run_id"
+wrapper="$task_dir/stop_on_first_cex_vcd.tcl"
+run_work="$task_dir/work"
+log="$task_dir/run.log"
+
+[[ -f $formal_dir/sourceme ]] || { printf 'Missing formal sourceme.\n' >&2; exit 1; }
+[[ -f $wrapper ]] || { printf 'Missing first-CEX wrapper: %s\n' "$wrapper" >&2; exit 1; }
+mkdir -p "$run_work"
+
+cd "$formal_dir"
+set +u
+source ./sourceme
+set -u
+
+if [[ -n $config_fragment ]]; then
+  config_fragment=$(realpath "$config_fragment")
+  [[ $config_fragment == "$task_dir/"* && -f $config_fragment ]] || {
+    printf 'Config fragment must be a file inside the task directory.\n' >&2
+    exit 2
+  }
+  export BLKFORMAL_CONFIG="${BLKFORMAL_CONFIG:-} $config_fragment"
+fi
+
+base_tcl=${TB_HOME:-$formal_dir}/scripts/flt.tcl
+[[ -f $base_tcl ]] || base_tcl="$formal_dir/scripts/flt.tcl"
+[[ -f $base_tcl ]] || { printf 'Missing target Tcl.\n' >&2; exit 1; }
+
+export FPV_MAX_JOBS=$jobs
+export FPV_PROOF_LIMIT=$proof_limit
+export FTRUN_BASE_TCL=$base_tcl
+export FTRUN_RUN_LIMIT=$proof_limit
+export FTRUN_PROVE_TASK=$prove_task
+if [[ -n $cex_property_glob ]]; then
+  export FTRUN_CEX_PROPERTY_GLOB=$cex_property_glob
+fi
+
+printf 'FPV_WORKTREE=%s\n' "$worktree"
+printf 'FPV_TARGET=%s\n' "$target"
+printf 'FPV_MAX_JOBS=%s\n' "$jobs"
+printf 'FPV_PROOF_LIMIT=%s\n' "$proof_limit"
+printf 'FPV_RUN_DIR=%s\n' "$run_work"
+printf 'FPV_CONFIG_FRAGMENT=%s\n' "${config_fragment:-NONE}"
+printf 'FPV_CEX_PROPERTY_GLOB=%s\n' "${cex_property_glob:-FIRST_CEX}"
+
+cd "$run_work"
+set +e
+ftrun "$target" -tcl "$wrapper" -local -batch -auto_run \
+  -slots "$jobs" -save on_failure 2>&1 | tee "$log"
+run_status=${PIPESTATUS[0]}
+set -e
+
+printf 'FTRUN_STATUS=%s\n' "$run_status"
+printf 'RUN_LOG=%s\n' "$log"
+rg --files "$run_work" -g '*.vcd' -g '*.rpt' -g 'verification_results.json' \
+  -g 'proof_report.json' -g 'run.cmd' -g 'args.json' || true
+exit "$run_status"

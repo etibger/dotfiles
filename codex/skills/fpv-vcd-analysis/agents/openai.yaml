@@ -1,0 +1,4 @@
+interface:
+  display_name: "FPV VCD Analysis"
+  short_description: "Analyze Jasper counterexample VCD evidence"
+  default_prompt: "Use $fpv-vcd-analysis to summarize and inspect a JasperGold counterexample VCD."
