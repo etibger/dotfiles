@@ -26,8 +26,10 @@ config.font_size = 18
 --config.font = wezterm.font("JetBrains Mono", { weight = "Bold" })
 -- Find the nicest font possible
 --config.font = wezterm.font("MesloLGS Nerd Font Mono", { weight = "Bold" })
+config.font_dirs = { os.getenv("HOME") .. "/Library/Fonts" }
 config.font = wezterm.font_with_fallback({
-    { family = "JetBrains Mono", weight = "Bold" },
+    { family = "JetBrainsMono Nerd Font Mono", weight = "Bold" },
+    "JetBrains Mono",
     "Noto Sans Symbols 2",
     "Noto Sans Math",
     "Symbols Nerd Font Mono",

@@ -23,6 +23,7 @@ typeset -U fpath
 fpath=(/opt/homebrew/share/zsh/site-functions $fpath)
 
 export WEZTERM_THEME=nord
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 export TCL_LIBRARY=/opt/homebrew/opt/tcl-tk/lib/tcl9.0
 export TK_LIBRARY=/opt/homebrew/opt/tcl-tk/lib/tk9.0
 export KEYTIMEOUT=1
