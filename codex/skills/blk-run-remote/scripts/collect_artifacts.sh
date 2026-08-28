@@ -35,7 +35,7 @@ case "$regression" in
   sanity|smoke|nightly) ;;
   *) die 'Regression must be sanity, smoke, or nightly.' ;;
 esac
-[[ $worktree =~ ^/home/tibger01/projects/fornjot/tmp_gpu_blk_run_[0-9a-f]{12}_${regression}$ ]] ||
+[[ $worktree =~ ^/home/tibger01/projects/fornjot/tmp_gpu_blk_run_[0-9a-f]{12}_${regression}(_[A-Za-z0-9][A-Za-z0-9._-]{0,63})?$ ]] ||
   die 'Rejected worktree path.'
 [[ $run_id =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]] || die 'Rejected run ID.'
 
@@ -59,6 +59,7 @@ rsync -a -e "$ssh_transport" --prune-empty-dirs --max-size=20m \
   --include='*.config' \
   --include='*.yaml' \
   --include='*.yml' \
+  --include='cache.sqlite' \
   --exclude='*' \
   "$remote_sim" "$dest/sim2/"
 

@@ -48,7 +48,7 @@ case "$regression" in
   sanity|smoke|nightly) ;;
   *) die 'Regression must be sanity, smoke, or nightly.' ;;
 esac
-[[ $worktree =~ ^/home/tibger01/projects/fornjot/tmp_gpu_blk_run_[0-9a-f]{12}_${regression}$ ]] ||
+[[ $worktree =~ ^/home/tibger01/projects/fornjot/tmp_gpu_blk_run_[0-9a-f]{12}_${regression}(_[A-Za-z0-9][A-Za-z0-9._-]{0,63})?$ ]] ||
   die 'Rejected worktree path.'
 [[ $run_id =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]] || die 'Rejected run ID.'
 
@@ -65,7 +65,7 @@ RUN_ID=$run_id
 REGRESSION=$regression
 TB_DIR=$tb_dir
 SIM_DIR=$sim_dir
-BLK_RUN_OPTIONS=--build-clean --$regression --no-bsub --worker=local --max-jobs 10
+BLK_RUN_OPTIONS=--build-clean --$regression --set-lsf-mem-limit 12000 --no-bsub --no-bsub-build --worker=local --max-jobs 2
 EOF
 
 cd "$tb_dir"
@@ -81,10 +81,11 @@ mkdir sim2
 cd sim2
 blk_setup
 
-printf 'BLK_RUN_COMMAND=blk_run --build-clean --%s --no-bsub --worker=local --max-jobs 10\n' \
+printf 'BLK_RUN_COMMAND=blk_run --build-clean --%s --set-lsf-mem-limit 12000 --no-bsub --no-bsub-build --worker=local --max-jobs 2\n' \
   "$regression"
 set +e
-blk_run --build-clean "--$regression" --no-bsub --worker=local --max-jobs 10 \
+blk_run --build-clean "--$regression" --set-lsf-mem-limit 12000 \
+  --no-bsub --no-bsub-build --worker=local --max-jobs 2 \
   2>&1 | tee "$task_dir/run.log"
 blk_run_status=${PIPESTATUS[0]}
 set -e

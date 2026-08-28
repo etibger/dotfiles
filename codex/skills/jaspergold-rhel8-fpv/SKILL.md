@@ -1,138 +1,76 @@
 ---
 name: jaspergold-rhel8-fpv
-description: Orchestrate an isolated JasperGold FPV run for GPU Formal fb_tex_flt on the rhel8-VM host, from committed-candidate transfer through bounded proof and local artifact collection. Use when asked to run fb_tex_flt remotely; standard execution is self-contained and needs no specification lookup. Do not use for simulation-only work or shared-checkout execution.
+description: Run bounded GPU Formal fb_tex_flt on rhel8-VM from a committed candidate, retaining the isolated worktree and producing normalized proof results. Use for remote JasperGold FPV; do not use for simulation-only work or shared checkouts.
 ---
 
 # JasperGold RHEL8 FPV
 
-This is a hierarchical composition skill. It coordinates other skills; it does
-not duplicate their safety and debugging procedures.
+Use [scripts/run_remote_fpv.sh](scripts/run_remote_fpv.sh) for the controlled
+workflow: transfer current committed `HEAD` through RHEL8 `push_gpu`, create an
+isolated worktree, prepare through `make sources`, run `tex_flt`, collect small
+reports, and retain the remote proof worktree and database.
 
-## Defaults and required inputs
+## Defaults and bounds
 
-- SSH target: `rhel8-VM` using key-only authentication.
+- Host: key-authenticated `rhel8-VM`.
 - Formal environment: `verification/formal/fb_tex_flt`.
-- FTRun target: `tex_flt` for the normal one-command workflow.
-- Proof concurrency: 6 jobs/slots.
-- Active proof duration: 30 minutes.
+- Target: `tex_flt`.
+- Default concurrency: a verified cap of 6 local Jasper proof jobs, backed by
+  6 FTRun slots.
+- Default active proof time: 30 minutes; accept 1 minute through 24 hours.
+- Verified stop condition: requested proof time.
+- Saved-trace cap: 5 CEXs. A tested individual-property stop-after-five
+  mechanism is still an executor gap; FTS `runtime.failure_limit` counts tasks
+  and must not be represented as that cap.
 - Local artifacts:
-  `<repo>/private/tmp/jaspergold-rhel8-fpv/<run-id>/`.
+  `<repo>/private/tmp/to_persist/jaspergold-rhel8-fpv/<run-id>/`.
 
-Allow the caller to override jobs and duration. Keep the normal wrapper target
-fixed to `tex_flt`; use the separately reviewed trial procedure when a
-different target is required. State that jobs/slots do not guarantee the same
-number of OS processes or physical CPU cores.
+The capture wrapper preserves ordinary target Tcl hooks, applies both the FTS
+strategy limits and Jasper's local ProofGrid limits immediately before
+`auto_run`, saves up to five raw CEX traces, and attempts one QuietTrace for
+first-pass debug. "Six processes" is normalized as six concurrent local proof
+job slots, which is the limit exposed by FTS/Jasper. For validation-campaign
+sanity runs, `--campaign-no-prove-cache` adds the fixed
+`validation_campaign_disable_prove_cache` fragment. It disables ProofMaster
+and both prove-cache load and save so the bounded run does not spend CPU on
+cache-signature workers or inherit cached proof results.
 
-## Normal one-command entrypoint
-
-For an ordinary committed-candidate run, invoke the installed wrapper directly:
+## Entrypoint and result
 
 ```sh
-/Users/tibger01/.config/codex/skills/jaspergold-rhel8-fpv/scripts/run_remote_fpv.sh \
-  --commit <current-HEAD-sha> --jobs 6 --proof-limit 30m
+~/.config/codex/skills/jaspergold-rhel8-fpv/scripts/run_remote_fpv.sh \
+  --commit <current-HEAD-sha> --jobs 6 --proof-limit 5m \
+  --campaign-no-prove-cache
 ```
 
-Do not prefix this command with `bash`, `zsh`, `env`, or another launcher: the
-execution-policy rule matches the wrapper path as the first argument. The
-wrapper accepts only a commit SHA, a 1--10 slot cap, and a proof duration from
-1 minute through 24 hours. It fixes the local repository, SSH target, transfer
-ref naming, remote worktree root, formal target, helper scripts, artifact path,
-and cleanup operation. The transfer ref includes the candidate's 12-character
-SHA to prevent different concurrent candidates from overwriting one another.
-The wrapper also requires the requested candidate to equal the repository's
-current `HEAD`.
+Invoke the installed path directly. `--dry-run` performs only local
+validation. A live run remains in the foreground and produces
+`fpv_property_summary.json` plus `.rpt`. The normalized classification is:
 
-Use `--dry-run` to validate the local candidate and print the resolved plan
-without SSH, Git transfer, or remote mutation. A live run streams setup and
-proof output, creates the final property reports, collects selected artifacts,
-and removes the guarded worktree only after the copied `run.log` and both
-property-summary files are nonempty. If collection or validation fails, it
-prints `RECOVERY_WORKTREE` and retains the isolated worktree.
+- `PASS` when the bounded run has no assertion CEX/error, the six-job local
+  cap is verified from the wrapper marker, effective IPF031 settings, and
+  observed ProofGrid usable levels and ordinary proof-engine peak no greater
+  than six; at least one
+  run-scoped `jg_proof` process sample and some processed properties are also
+  required, even if some properties remain unresolved;
+- `FAIL` when assertion CEX/error counts are nonzero;
+- `ERROR` when FTRun itself fails without an assertion failure result, or every
+  assertion remains `unprocessed` so the proof did not produce validation
+  evidence.
 
-Use the component commands below only for manual recovery or for the explicitly
-authorized intentional-CEX trial. Keeping the standard workflow behind this
-single fixed-purpose entrypoint avoids separate approvals for its internal
-SSH, transfer, staging, collection, and guarded cleanup commands.
+Report the separate proof-completeness, execution-evidence, and structured
+`concurrency` fields, counts, proof limit, CEX save cap, and retained
+worktree. New process-detail evidence classifies `comm=jg_engineCache` as a
+prove-cache worker before considering its ProofGrid-shaped argv. Those workers
+and controller/helpers are reported separately and do not consume ordinary
+proof-job slots. The raw total CPU-worker peak remains diagnostic; an ordinary
+proof-engine peak above six is an `ERROR`. Legacy count-only evidence retains
+the conservative job-plus-one/turnover checks. A prior nonzero runner remains
+a failed attempt even if later parsing explains its raw process peak; retain
+it and start a fresh cache-disabled attempt instead of rewriting its status.
+Large JDBs and VCDs stay remote by default; use
+`collect_artifacts.sh --include-vcd` only when a later debug step needs traces.
+No cleanup is automatic.
 
-## Knowledge lookup boundary
-
-Treat the installed skill and its fixed-purpose wrapper as the authoritative
-operational procedure for a standard run. Invoking the wrapper, choosing the
-caller-requested job count and proof limit, locating its output, and reporting
-the generated property summary do not depend on internal design knowledge.
-
-For that standard execution path, do not query Speculus, Jira, Confluence, web
-search, or other knowledge services, and do not search the wider repository to
-rediscover the invocation. Perform only the local preflight needed by the
-wrapper, then invoke it directly. This is an explicit exception for executing
-this controlled workflow, not a general exception to repository knowledge
-policy.
-
-Use a knowledge service only when the user explicitly requests it or when a
-separate task requires interpreting an unexpected property, architecture, or
-design result that this workflow and its generated reports do not explain.
-
-## Internal composition order
-
-1. Use `$transfer-git-commit-to-rhel8` to push the committed candidate and
-   record its SHA and closest origin ancestor.
-2. Use `$setup-gpu-repo-rhel8` to create and prepare a dedicated hash-named
-   worktree from `a_gpu`. Do not use a lock or alter a shared checkout.
-3. Read and apply `$jaspergold-local-fpv`, including its
-   `references/workflow.md` and first-CEX wrapper. Supply the requested jobs and
-   proof duration explicitly.
-4. After FTRun finishes, run the deterministic property-summary stage from
-   [scripts/summarize_fpv_results.py](scripts/summarize_fpv_results.py). Require
-   `fpv_property_summary.rpt` and `fpv_property_summary.json`; report assertion
-   passes, CEX failures, unresolved assertions, covered properties, and
-   unreachable or unresolved covers. Treat the proof report as authoritative
-   because FTRun can exit zero when assertions have CEXs. Run this stage with a
-   task-local Python 3.12 environment created by `uv`, following the GPU
-   repository's Python-version pinning; never use the RHEL8 system Python.
-5. Collect selected proof artifacts locally with
-   [scripts/collect_artifacts.sh](scripts/collect_artifacts.sh).
-6. For a counterexample, invoke `$fpv-vcd-analysis` on the copied VCD.
-
-Request authorization immediately before externally mutating actions unless
-the current user request already authorizes them. Keep the foreground SSH
-session observable, report progress at least once per minute, and do not leave
-Jasper/FTRun jobs running after an aborted trial.
-
-## Remote run
-
-Copy the local Jasper wrapper,
-[scripts/summarize_fpv_results.py](scripts/summarize_fpv_results.py), and
-[scripts/run_fpv.sh](scripts/run_fpv.sh) into the worktree's task-specific
-`private/tmp/jaspergold-rhel8-fpv/<run-id>/` directory. Execute `run_fpv.sh` on
-the VM with the exact worktree, run ID, job count, and proof limit. The script
-keeps the normal target Tcl hooks, applies the active proof limit through the
-wrapper, passes the job cap through `-slots`, runs in the foreground, and then
-creates `<remote-task-dir>/report-venv` with `uv` and Python 3.12 before the
-proof. It uses that environment to write the two aggregate property-summary
-files even when the proof contains CEXs. Its `UV_CACHE_DIR` is the task-local
-`<remote-task-dir>/uv-cache`, so the report setup does not pollute the user's
-home directory or a tracked worktree path.
-
-Read [references/remote-workflow.md](references/remote-workflow.md) before the
-first run on a host or when using the intentional-CEX trial.
-
-## One-minute skill trial
-
-Only when the user authorizes an intentionally failing smoke assertion:
-
-- keep the default six-job cap and use `1m` active proof time, unless the caller
-  requests a different trial concurrency;
-- apply [assets/intentional_cex.patch](assets/intentional_cex.patch) only to the
-  isolated worktree after setup;
-- append [assets/intentional_cex_target.yaml](assets/intentional_cex_target.yaml)
-  to `BLKFORMAL_CONFIG` and run target `tex_flt_codex_trial`; this disables
-  ProofMaster orchestration and the proof cache for a predictable fresh smoke
-  run while retaining the six-slot cap;
-- request the QuietTrace with property glob
-  `*codex_trial_intentional_cex`;
-- confirm `git status` shows the trial change and never commit or push it;
-- require a nonempty raw or QuietTrace VCD, copy it locally, and analyze it;
-- remove the remote worktree after preserving requested artifacts.
-
-An expected CEX proves that the orchestration and artifact path work. It says
-nothing about the correctness of the candidate RTL.
+Read [references/remote-workflow.md](references/remote-workflow.md) before
+recovery or manual artifact collection.
