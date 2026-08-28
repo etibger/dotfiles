@@ -1,0 +1,4 @@
+interface:
+  display_name: "Set Up GPU Repo on EU3"
+  short_description: "Create an isolated GPU worktree on EU3"
+  default_prompt: "Use $setup-gpu-repo-eu3 to create an isolated eu3-candidate worktree and prepare it only through design source generation."

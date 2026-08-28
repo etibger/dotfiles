@@ -1,0 +1,4 @@
+interface:
+  display_name: "RHEL8 TEX Lint"
+  short_description: "Run retained isolated TEX lint on RHEL8"
+  default_prompt: "Use $rhel8-lint to lint the current committed GPU candidate on RHEL8 and report its retained evidence."

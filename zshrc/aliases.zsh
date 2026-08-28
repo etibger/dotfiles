@@ -73,3 +73,7 @@ function arm-tabs() {
 
   command wezterm cli activate-pane --pane-id "$mac_pane" >/dev/null
 }
+
+function h() {
+  "$@" --help 2>&1 | bat --plain --language=help
+}

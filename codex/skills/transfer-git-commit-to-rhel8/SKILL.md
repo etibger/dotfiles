@@ -1,25 +1,24 @@
 ---
 name: transfer-git-commit-to-rhel8
-description: Transfer one committed GPU repository candidate to a key-authenticated RHEL8 SSH host through a bare Git handoff repository. Use when a remote validation needs the exact local commit without copying a full worktree; do not use for uncommitted changes or general deployment.
+description: Transfer one committed GPU candidate to key-authenticated rhel8-VM through the fixed push_gpu Git handoff repository. Use when RHEL8 validation needs the exact local commit; do not use for uncommitted worktrees or general deployment.
 ---
 
 # Transfer Git Commit to RHEL8
 
-Transfer only the commit and missing Git objects needed by the remote host. The
-default handoff is `rhel8-VM:git-transfer/c_gpu.git`, branch
-`refs/heads/fpv-candidate`.
+Transfer only the commit and missing Git objects needed by RHEL8. The fixed
+handoff repository is `/home/tibger01/projects/fornjot/push_gpu`; candidate
+refs may be replaced without moving or cleaning that repository's checkout.
 
 ## Contract
 
 - Require key-only access: `ssh -o BatchMode=yes rhel8-VM true` must succeed.
-- Never retrieve, print, or pass a password. Do not enable agent forwarding.
-- Transfer `HEAD`, not the local working tree. Stop if tracked staged or
-  unstaged changes exist; untracked files are not transferred.
-- The handoff branch is intentionally replaceable. Obtain authorization before
-  the external `git push --force` unless the current user request already grants
-  it.
-- A normal Git push negotiates and sends missing objects; do not archive, rsync,
-  or force-push an entire worktree.
+- Transfer current committed `HEAD`, not working-tree content. Reject tracked
+  staged or unstaged changes; untracked files are not transferred.
+- Never reset, clean, switch, or otherwise change the `push_gpu` checkout.
+- Obtain authorization before the external force-update unless the current
+  request already authorizes candidate transfer.
+- Use a normal Git push, then verify the exact commit with
+  `git -C /home/tibger01/projects/fornjot/push_gpu rev-parse`.
 
 ## Procedure
 
@@ -28,14 +27,11 @@ candidate repository:
 
 ```sh
 ~/.config/codex/skills/transfer-git-commit-to-rhel8/scripts/transfer_candidate.sh \
-  --repo . --host rhel8-VM --remote-ref fpv-candidate
+  --repo . --host rhel8-VM --remote-ref rhel8-candidate
 ```
 
-Record its `CANDIDATE_SHA`, `REMOTE_REF`, and `CLOSEST_ORIGIN_REF` output. The
-closest origin ref minimizes symmetric commit distance from the candidate among
-origin branches that contain the candidate's nearest origin-reachable boundary
-commit. This still works when the origin branch advanced after the local topic
-forked. The result supplies worktree branch context; it does not replace
-checking out the exact candidate.
-
-Verify the remote ref resolves to the exact local SHA before continuing.
+Use SHA-specific refs for concurrent workflows, for example
+`fpv-candidate-<sha12>` and `blk-run-candidate-<sha12>`. Record
+`CANDIDATE_SHA`, `REMOTE_REF`, and `REMOTE_VERIFIED`; require the verified
+remote SHA to match before setting up a worktree. `--dry-run` performs only
+local validation.

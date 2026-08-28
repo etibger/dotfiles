@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-readonly base_repo=/home/tibger01/projects/fornjot/push_gpu
-readonly worktree_root=/home/tibger01/projects/fornjot
-
-candidate_ref=rhel8-candidate
+base_repo=/arm/projectscratch/mpd/pj33000696_njord/users/tibger01/push_gpu
+worktree_root=/arm/projectscratch/mpd/pj33000696_njord/users/tibger01
+candidate_ref=refs/heads/eu3-candidate
 workflow=fpv
 regression=
 prepare=1
@@ -12,19 +11,17 @@ resume_existing=0
 
 usage() {
   cat >&2 <<'EOF'
-Usage: setup_worktree.sh [--candidate-ref NAME]
-                         [--workflow fpv|blk-run]
+Usage: setup_worktree.sh [--workflow fpv|blk-run]
                          [--regression sanity|smoke|nightly]
                          [--skip-prepare] [--resume-existing]
 
-The candidate is resolved directly from refs/heads/NAME in the push_gpu
-handoff repository. The push_gpu checkout and HEAD are never changed.
+The candidate is always the fixed refs/heads/eu3-candidate commit in push_gpu.
+The default workflow is fpv. The blk-run workflow requires --regression.
 EOF
 }
 
 while (($#)); do
   case "$1" in
-    --candidate-ref) candidate_ref=${2:?missing value}; shift 2 ;;
     --workflow) workflow=${2:?missing value}; shift 2 ;;
     --regression) regression=${2:?missing value}; shift 2 ;;
     --skip-prepare) prepare=0; shift ;;
@@ -33,15 +30,6 @@ while (($#)); do
     *) usage; printf 'Unknown argument: %s\n' "$1" >&2; exit 2 ;;
   esac
 done
-
-[[ $candidate_ref =~ ^[A-Za-z0-9][A-Za-z0-9._/-]*$ ]] || {
-  printf 'Rejected candidate ref: %s\n' "$candidate_ref" >&2
-  exit 2
-}
-[[ $candidate_ref != *..* && $candidate_ref != */.lock && $candidate_ref != *'@{'* ]] || {
-  printf 'Rejected candidate ref: %s\n' "$candidate_ref" >&2
-  exit 2
-}
 
 case "$workflow" in
   fpv)
@@ -66,8 +54,7 @@ case "$workflow" in
 esac
 
 git -C "$base_repo" rev-parse --git-dir >/dev/null
-full_candidate_ref="refs/heads/$candidate_ref"
-candidate=$(git -C "$base_repo" rev-parse --verify "${full_candidate_ref}^{commit}")
+candidate=$(git -C "$base_repo" rev-parse --verify "${candidate_ref}^{commit}")
 short_sha=${candidate:0:12}
 
 case "$workflow" in
@@ -115,13 +102,13 @@ actual=$(git -C "$worktree" rev-parse HEAD)
   exit 1
 }
 
-# Emit identity before preparation so callers can retain and resume a worktree
-# whose component or source preparation fails.
+# Emit identity before preparation so callers can retain the exact worktree if
+# component or workflow-specific preparation fails.
 printf 'BASE_REPO=%s\n' "$base_repo"
 printf 'WORKTREE=%s\n' "$worktree"
 printf 'TEMP_BRANCH=%s\n' "$branch"
 printf 'CANDIDATE_SHA=%s\n' "$candidate"
-printf 'CANDIDATE_REF=%s\n' "$full_candidate_ref"
+printf 'CANDIDATE_REF=%s\n' "$candidate_ref"
 printf 'WORKFLOW=%s\n' "$workflow"
 if [[ $workflow == blk-run ]]; then
   printf 'REGRESSION=%s\n' "$regression"

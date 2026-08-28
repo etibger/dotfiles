@@ -1,24 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-readonly base_repo=/home/tibger01/projects/fornjot/push_gpu
-
+base_repo=/arm/projectscratch/mpd/pj33000696_njord/users/tibger01/push_gpu
 worktree=
 workflow=fpv
 regression=
 confirmed=0
 if_exists=0
-
-usage() {
-  cat >&2 <<'EOF'
-Usage: remove_worktree.sh --worktree PATH [--workflow fpv|blk-run]
-                          [--regression sanity|smoke|nightly]
-                          [--if-exists] --yes
-
-This removes only the exact registered workflow worktree and its temporary
-branch. It never deletes a handoff ref or changes the push_gpu checkout.
-EOF
-}
 
 while (($#)); do
   case "$1" in
@@ -27,8 +15,18 @@ while (($#)); do
     --regression) regression=${2:?missing value}; shift 2 ;;
     --if-exists) if_exists=1; shift ;;
     --yes) confirmed=1; shift ;;
-    -h|--help) usage; exit 0 ;;
-    *) usage; printf 'Unknown argument: %s\n' "$1" >&2; exit 2 ;;
+    -h|--help)
+      cat <<'EOF'
+Usage: remove_worktree.sh --worktree PATH [--workflow fpv|blk-run]
+                          [--regression sanity|smoke|nightly]
+                          [--if-exists] --yes
+
+The default workflow is fpv. The blk-run workflow requires --regression.
+--if-exists also succeeds when no matching temporary worktree or branch
+remains.
+EOF
+      exit 0 ;;
+    *) printf 'Unknown argument: %s\n' "$1" >&2; exit 2 ;;
   esac
 done
 
@@ -39,7 +37,7 @@ case "$workflow" in
       printf '%s\n' '--regression is valid only with --workflow blk-run.' >&2
       exit 2
     }
-    [[ $worktree =~ ^/home/tibger01/projects/fornjot/tmp_gpu_fpv_run_([0-9a-f]{12})$ ]] || {
+    [[ $worktree =~ ^/arm/projectscratch/mpd/pj33000696_njord/users/tibger01/tmp_gpu_fpv_run_([0-9a-f]{12})$ ]] || {
       printf 'Rejected FPV worktree path: %s\n' "$worktree" >&2
       exit 2
     }
@@ -55,7 +53,7 @@ case "$workflow" in
         exit 2
         ;;
     esac
-    [[ $worktree =~ ^/home/tibger01/projects/fornjot/tmp_gpu_blk_run_([0-9a-f]{12})_${regression}$ ]] || {
+    [[ $worktree =~ ^/arm/projectscratch/mpd/pj33000696_njord/users/tibger01/tmp_gpu_blk_run_([0-9a-f]{12})_${regression}$ ]] || {
       printf 'Rejected blk-run worktree path: %s\n' "$worktree" >&2
       exit 2
     }

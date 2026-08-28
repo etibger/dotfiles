@@ -1,4 +1,4 @@
 interface:
   display_name: "Set Up GPU Repo on RHEL8"
   short_description: "Create an isolated GPU worktree on RHEL8"
-  default_prompt: "Use $setup-gpu-repo-rhel8 to create and prepare an isolated GPU worktree for a transferred candidate."
+  default_prompt: "Use $setup-gpu-repo-rhel8 to create an isolated candidate worktree and prepare it only through design source generation."

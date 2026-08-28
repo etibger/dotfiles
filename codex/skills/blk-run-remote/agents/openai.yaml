@@ -1,0 +1,4 @@
+interface:
+  display_name: "Remote blk_run"
+  short_description: "Run isolated remote TEX regressions"
+  default_prompt: "Use $blk-run-remote to run the sanity regression on rhel8-VM from the current committed HEAD and report the result artifacts."

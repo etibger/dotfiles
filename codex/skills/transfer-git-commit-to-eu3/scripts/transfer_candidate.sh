@@ -2,19 +2,23 @@
 set -euo pipefail
 
 repo=.
-host=rhel8-VM
-remote_ref=rhel8-candidate
-remote_repo=/home/tibger01/projects/fornjot/push_gpu
+host=eu3
+remote_ref=eu3-candidate
+remote_repo=/arm/projectscratch/mpd/pj33000696_njord/users/tibger01/push_gpu/
+askpass="${XDG_CONFIG_HOME:-$HOME/.config}/zshrc/ssh-askpass-keychain"
 dry_run=0
 
 usage() {
-  printf 'Usage: %s [--repo PATH] [--host HOST] [--remote-ref NAME] [--dry-run]\n' "$0" >&2
+  printf 'Usage: %s [--repo PATH] [--remote-ref NAME] [--dry-run]\n' "$0" >&2
+}
+
+git_local() {
+  command git -c core.fsmonitor=false "$@"
 }
 
 while (($#)); do
   case "$1" in
     --repo) repo=${2:?missing value for --repo}; shift 2 ;;
-    --host) host=${2:?missing value for --host}; shift 2 ;;
     --remote-ref) remote_ref=${2:?missing value for --remote-ref}; shift 2 ;;
     --dry-run) dry_run=1; shift ;;
     -h|--help) usage; exit 0 ;;
@@ -22,10 +26,6 @@ while (($#)); do
   esac
 done
 
-[[ $host =~ ^[A-Za-z0-9._-]+$ ]] || {
-  printf 'Unsafe SSH host token: %s\n' "$host" >&2
-  exit 2
-}
 [[ $remote_ref =~ ^[A-Za-z0-9][A-Za-z0-9._/-]*$ ]] || {
   printf 'Unsafe remote ref: %s\n' "$remote_ref" >&2
   exit 2
@@ -33,10 +33,6 @@ done
 [[ $remote_ref != *..* && $remote_ref != */.lock && $remote_ref != *'@{'* ]] || {
   printf 'Rejected remote ref: %s\n' "$remote_ref" >&2
   exit 2
-}
-
-git_local() {
-  command git -c core.fsmonitor=false "$@"
 }
 
 repo=$(git_local -C "$repo" rev-parse --show-toplevel)
@@ -89,12 +85,30 @@ if (( ! found_boundary )); then
 fi
 
 if (( ! dry_run )); then
-  ssh -o BatchMode=yes "$host" true
-  git_local -C "$repo" push --force "$host:$remote_repo" \
-    "$candidate:refs/heads/$remote_ref"
+  [[ -x $askpass ]] || {
+    printf 'Missing executable SSH askpass helper: %s\n' "$askpass" >&2
+    exit 1
+  }
+  if ! /usr/bin/security find-generic-password \
+    -a tibger01 -s com.arm.ssh.tibger01 >/dev/null 2>&1; then
+    printf 'Arm SSH password is not in Keychain; run arm-ssh-password-save first.\n' >&2
+    exit 1
+  fi
 
-  remote_candidate=$(ssh -o BatchMode=yes "$host" \
-    git -C "$remote_repo" rev-parse --verify "refs/heads/$remote_ref^{commit}")
+  export SSH_ASKPASS=$askpass
+  export SSH_ASKPASS_REQUIRE=force
+
+  ssh -o BatchMode=no -o PubkeyAuthentication=no \
+    -o PreferredAuthentications=password,keyboard-interactive \
+    -o NumberOfPasswordPrompts=1 "$host" true
+  GIT_SSH_COMMAND='ssh -o BatchMode=no -o PubkeyAuthentication=no -o PreferredAuthentications=password,keyboard-interactive -o NumberOfPasswordPrompts=1' \
+    git_local -C "$repo" push --force "$host:$remote_repo" \
+      "$candidate:refs/heads/$remote_ref"
+
+  remote_candidate=$(ssh -o BatchMode=no -o PubkeyAuthentication=no \
+    -o PreferredAuthentications=password,keyboard-interactive \
+    -o NumberOfPasswordPrompts=1 "$host" git -C "$remote_repo" rev-parse --verify \
+      "refs/heads/$remote_ref^{commit}")
   if [[ $remote_candidate != "$candidate" ]]; then
     printf 'Remote verification mismatch: local=%s remote=%s\n' \
       "$candidate" "$remote_candidate" >&2
