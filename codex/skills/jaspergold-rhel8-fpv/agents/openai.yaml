@@ -1,4 +1,0 @@
-interface:
-  display_name: "JasperGold RHEL8 FPV"
-  short_description: "Run bounded remote GPU FPV with artifacts"
-  default_prompt: "Use $jaspergold-rhel8-fpv to prove fb_tex_flt on rhel8-VM with 6 slots for 30 minutes. Follow its fixed wrapper directly without a specification lookup."

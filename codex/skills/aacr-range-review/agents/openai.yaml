@@ -1,4 +1,0 @@
-interface:
-  display_name: "AACR Range Review"
-  short_description: "Review a committed base-to-tip range with AACR"
-  default_prompt: "Use $aacr-range-review to review this committed candidate range and retain its complete AACR evidence."

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Validate GPU Wave A"
-  short_description: "Prove independent detection of an intentional GPU bug"
-  default_prompt: "Use $validate-gpu-wave-a to run the complete negative-test Wave A gate for this committed base..tip range and retain every branch result."

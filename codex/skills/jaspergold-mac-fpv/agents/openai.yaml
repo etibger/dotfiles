@@ -1,4 +1,0 @@
-interface:
-  display_name: "Mac Wave A JasperGold FPV"
-  short_description: "Run bounded local fb_tex_flt bug detection"
-  default_prompt: "Use $jaspergold-mac-fpv to run the source-preflighted ten-minute Wave A fb_tex_flt detector and retain its CEX evidence."

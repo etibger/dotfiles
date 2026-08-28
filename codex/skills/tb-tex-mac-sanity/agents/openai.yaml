@@ -1,4 +1,0 @@
-interface:
-  display_name: "Mac tb_tex Sanity"
-  short_description: "Run the fixed-seed Wave A TEX sanity test"
-  default_prompt: "Use $tb-tex-mac-sanity to run the fixed seed-1 Wave A TEX sanity detector after source preflight."

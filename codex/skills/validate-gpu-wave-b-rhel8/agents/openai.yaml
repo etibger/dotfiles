@@ -1,4 +1,0 @@
-interface:
-  display_name: "Validate GPU Wave B on RHEL8"
-  short_description: "Run and gate RHEL8 sanity simulation plus FPV"
-  default_prompt: "Use $validate-gpu-wave-b-rhel8 to run Wave B for the current committed candidate."

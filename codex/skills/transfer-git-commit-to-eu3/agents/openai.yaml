@@ -1,4 +1,0 @@
-interface:
-  display_name: "Transfer Git Commit to EU3"
-  short_description: "Transfer one committed candidate to EU3"
-  default_prompt: "Use $transfer-git-commit-to-eu3 to transfer the current committed HEAD to the configured EU3 handoff repository."

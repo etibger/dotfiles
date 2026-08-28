@@ -1,4 +1,0 @@
-interface:
-  display_name: "JasperGold Local FPV"
-  short_description: "Run and debug local JasperGold FPV proofs"
-  default_prompt: "Use $jaspergold-local-fpv to run a local proof with explicit job and duration limits and preserve the first counterexample as VCD."
