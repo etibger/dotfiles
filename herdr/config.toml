@@ -8,6 +8,7 @@ name = "rose-pine"
 [keys]
 prefix = "ctrl+b"
 toggle_sidebar = "prefix+p"
+goto = ["prefix+g", "ctrl+o"]
 
 # Reload config (tmux: prefix+r)
 reload_config = "prefix+r"
@@ -18,6 +19,9 @@ focus_pane_left = "prefix+h"
 focus_pane_down = "prefix+j"
 focus_pane_up = "prefix+k"
 focus_pane_right = "prefix+l"
+
+# Toggle back to the previously focused pane
+last_pane = "prefix+tab"
 
 # Split panes with | and - (tmux: \ and -)
 split_vertical = "prefix+backslash"
@@ -33,9 +37,24 @@ close_tab = "prefix+alt+x"
 # Mouse control (tmux: set -g mouse on)
 mouse_capture = true
 
+# Top-row system load, refreshed every two seconds
+tab_bar_position = "top"
+tab_bar_right = [
+  { type = "command", command = "/bin/sh ~/.config/herdr/status-system-load.sh", interval_seconds = 2, timeout_seconds = 2 },
+]
+
 [advanced]
 # tmux: set -g history-limit 90000
 scrollback_limit_bytes = 10800000
+
+# Fuzzy-select a pane in the active tab
+[[keys.command]]
+key = "prefix+f"
+type = "popup"
+command = "/bin/bash ~/.config/herdr/pane-picker.sh"
+description = "pick pane in current tab"
+width = "75%"
+height = "65%"
 
 # Edit config in a popup (tmux: prefix+alt+m)
 [[keys.command]]
@@ -81,23 +100,24 @@ key = "prefix+t"
 type = "plugin_action"
 command = "herdr-theme-picker.open"
 
+
 [theme.custom]
-panel_bg = "#2e3440"
-sidebar_bg = "#272c36"
-active_row_bg = "#3b4252"
-selection_bg = "#3f4758"
-surface0 = "#3b4252"
-surface1 = "#4c566a"
-surface_dim = "#2a2f3a"
-overlay0 = "#4c566a"
-overlay1 = "#e5e9f0"
-text = "#d8dee9"
-subtext0 = "#e5e9f0"
-accent = "#81a1c1"
-mauve = "#b48ead"
-green = "#a3be8c"
-yellow = "#ebcb8b"
-red = "#bf616a"
-blue = "#81a1c1"
-teal = "#88c0d0"
-peach = "#bf616a"
+panel_bg = "#282a36"
+sidebar_bg = "#22232d"
+active_row_bg = "#21222c"
+selection_bg = "#44475a"
+surface0 = "#21222c"
+surface1 = "#6272a4"
+surface_dim = "#242631"
+overlay0 = "#6272a4"
+overlay1 = "#f8f8f2"
+text = "#f8f8f2"
+subtext0 = "#f8f8f2"
+accent = "#bd93f9"
+mauve = "#ff79c6"
+green = "#50fa7b"
+yellow = "#f1fa8c"
+red = "#ff5555"
+blue = "#bd93f9"
+teal = "#8be9fd"
+peach = "#ff6e6e"
