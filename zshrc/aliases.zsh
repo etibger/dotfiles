@@ -3,6 +3,7 @@ alias ll='ls -la'
 alias screensaver='cmatrix -ba -u 3 -C red'
 alias brew_up='brew update && brew upgrade && brew upgrade --cask && brew cleanup -s && rm -rf "$(brew --cache)"'
 alias rebuild_nvim='make CMAKE_BUILD_TYPE=Release CMAKE_INSTALL_PREFIX="$HOME" install'
+alias git-fsmonitor-restart='/Users/tibger01/.codex/hooks/git-fsmonitor.sh restart'
 
 # Open the standard Arm hosts in a fresh four-tab WezTerm window.
 function arm-ssh-password-save() {
