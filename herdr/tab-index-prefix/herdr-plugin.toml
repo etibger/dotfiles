@@ -1,0 +1,35 @@
+id = "tab-index-prefix"
+name = "Tab Index Prefix"
+version = "0.3.0"
+min_herdr_version = "0.8.0"
+description = "Keep every Herdr tab name prefixed with its current workspace index"
+platforms = ["linux", "macos"]
+
+[[startup]]
+command = ["bash", "reindex-tabs.sh"]
+
+[[events]]
+on = "tab.created"
+command = ["bash", "reindex-tabs.sh"]
+
+[[events]]
+on = "tab.closed"
+command = ["bash", "reindex-tabs.sh"]
+
+[[events]]
+on = "tab.renamed"
+command = ["bash", "reindex-tabs.sh"]
+
+[[events]]
+on = "tab.moved"
+command = ["bash", "reindex-tabs.sh"]
+
+[[events]]
+on = "pane.exited"
+command = ["bash", "reindex-tabs.sh"]
+
+[[actions]]
+id = "reindex"
+title = "Reindex all tab names"
+contexts = ["global"]
+command = ["bash", "reindex-tabs.sh"]
