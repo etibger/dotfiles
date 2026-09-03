@@ -1,0 +1,12 @@
+- [x] Megkerni Ivanat egy extra 1-2-1ra.
+    - [x] Foglalni meetinget
+- [ ] Megmutatni neki a feladataimat es megkerdrezni, melyik feladatot lehetne mashogy csinalni, hogy tobbet tanuljak TEX rol
+  - beismerni, hogy elvesztettem a fokuszt, hogy az lenne a feladatom, hogy minel tobbet tanuljak a TEX-rol
+- [ ] Elismetelni, hogy most ereztem igazan produktivnak magam
+  - formal workflow AI-jal (hasznaltam a formal tudasomt)
+  - close-loop debug (hasznaltam az egesz eddig mernoki tapasztalatomat)
+- [ ] Engedelyt kerni, hogy beszeljek JC-vel, ne kergessem magam illuzioba, hogy ott minden fenekig tejfel
+  - feladatokrol
+  - kihivasokrol
+- [ ] ugy erzem sokkal nagyobb impactot tudnek elerni az ARM-ban, mint a TEX-ben. What is more 10x than this?
+
