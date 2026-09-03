@@ -12,6 +12,7 @@ This README documents the tracked directories that are **not** listed in the roo
 ## Table of Contents
 
 - [Repository Overview](#repository-overview)
+- [Backlog](#backlog)
 - [What Is Tracked Here](#what-is-tracked-here)
 - [Ignored Directories Omitted From This README](#ignored-directories-omitted-from-this-readme)
 - [Root-Level Files](#root-level-files)
@@ -32,6 +33,10 @@ A few patterns stand out across the repo:
 - Pane and workspace movement is implemented consistently across AeroSpace, tmux, and WezTerm.
 - Visual styling leans on powerline-style prompts, Nerd Font glyphs, and themed status/tab bars.
 - Some tools are active, while others appear to be retained as previous or alternative setups.
+
+## Backlog
+
+- Replace broad Codex workspace network access with a repository-scoped Unix-socket permission for Git fsmonitor. The narrower policy should permit connections to Git's `.git/fsmonitor--daemon.ipc` sockets, including sockets in linked worktree and submodule Git directories, without enabling unrelated network access. Investigate whether this can be limited to fsmonitor queries made by commands such as `git status`; a socket-path allowlist alone is process-agnostic.
 
 ## What Is Tracked Here
 
