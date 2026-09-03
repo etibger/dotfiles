@@ -1,3 +1,0 @@
-[submodule "codex"]
-	path = codex
-	url = git@gitlab.geo.arm.com:Tibor.Gerlai/codex-agent-resources.git
