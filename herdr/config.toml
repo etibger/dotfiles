@@ -39,6 +39,9 @@ rename_tab = "prefix+,"
 # Mouse control (tmux: set -g mouse on)
 mouse_capture = true
 
+# Keep prefix+p as expanded/compact; prefix+shift+p toggles compact/hidden.
+sidebar_collapsed_mode = "compact"
+
 # Top-row system load, refreshed every two seconds
 tab_bar_position = "top"
 tab_bar_right = [
@@ -73,6 +76,13 @@ key = "prefix+alt+m"
 type = "popup"
 command = "vim ~/.config/herdr/config.toml"
 description = "edit herdr config"
+
+# Hide/show the compact sidebar rail by changing its collapsed presentation.
+[[keys.command]]
+key = "prefix+shift+p"
+type = "shell"
+command = "/bin/bash ~/.config/herdr/toggle-sidebar-visibility.sh"
+description = "hide/show collapsed sidebar"
 
 # Kill server (tmux: prefix+shift+x / kill-session)
 [[keys.command]]
