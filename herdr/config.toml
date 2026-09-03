@@ -33,6 +33,7 @@ copy_mode = "prefix+semicolon"
 
 # close_tab moved off shift+x (used for kill-session, like tmux)
 close_tab = "prefix+alt+x"
+rename_tab = "prefix+,"
 
 [ui]
 # Mouse control (tmux: set -g mouse on)
