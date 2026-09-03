@@ -7,6 +7,7 @@ name = "rose-pine"
 
 [keys]
 prefix = "ctrl+b"
+new_tab = ""
 toggle_sidebar = "prefix+p"
 goto = ["prefix+g", "ctrl+o"]
 
@@ -46,6 +47,15 @@ tab_bar_right = [
 [advanced]
 # tmux: set -g history-limit 90000
 scrollback_limit_bytes = 10800000
+
+# Create named tabs at home while pane splits continue following the active pane.
+[[keys.command]]
+key = "prefix+c"
+type = "popup"
+command = "/bin/bash ~/.config/herdr/new-tab-home.sh"
+description = "create tab at home"
+width = "50%"
+height = "20%"
 
 # Fuzzy-select a pane in the active tab
 [[keys.command]]
