@@ -1,0 +1,207 @@
+# This line should go on top of the file, outside the other sections
+mcp_oauth_callback_port = 1455
+
+model = "gpt-5.6-sol"
+model_provider = "proxy"
+disable_response_storage = true
+personality = "pragmatic"
+
+notify = ["/Users/tibger01/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+model_reasoning_effort = "high"
+
+approval_policy = "on-request"
+approvals_reviewer = "auto_review"
+
+sandbox_mode = "workspace-write"
+
+default_permissions = "personal-dev"
+
+[permissions.personal-dev]
+extends = ":workspace"
+
+[permissions.personal-dev.workspace_roots]
+"/Users/tibger01/.config/nvim" = true
+[sandbox_workspace_write]
+network_access = true
+
+[model_providers.proxy]
+name     = "OpenAI"
+base_url = "https://openai-api-proxy.geo.arm.com/api/providers/openai/v1"
+wire_api = "responses"
+
+requires_openai_auth = true
+[projects."/Users/tibger01/.config/nvim"]
+trust_level = "trusted"
+
+[projects."/Users/tibger01/Projects/Bragi/power_vectors"]
+trust_level = "trusted"
+
+[projects."/Users/tibger01/Projects/notes"]
+trust_level = "trusted"
+
+[projects."/Users/tibger01/.config"]
+trust_level = "trusted"
+
+[projects."/Users/tibger01/Projects/agent_based_codex/story_agent"]
+trust_level = "trusted"
+
+[projects."/Users/tibger01"]
+trust_level = "trusted"
+
+[projects."/Users/tibger01/Projects/programming/rust/hello_world"]
+trust_level = "trusted"
+
+[projects."/Users/tibger01/Projects/Fornjot/a_gpu"]
+trust_level = "trusted"
+
+[projects."/Users/tibger01/Projects/Fornjot/c_gpu"]
+trust_level = "trusted"
+
+[projects."/Users/tibger01/.intelligent_debug/gpu-agent-resources"]
+trust_level = "trusted"
+
+[projects."/Users/tibger01/.config/codex"]
+trust_level = "trusted"
+
+[projects."/Users/tibger01/Projects/Fornjot/c_gpu/tmp/gpu-agent-resources"]
+trust_level = "trusted"
+
+[projects."/Users/tibger01/Projects/Fornjot/d_gpu"]
+trust_level = "trusted"
+
+[projects."/Users/tibger01/Projects/Fornjot/b_gpu"]
+trust_level = "trusted"
+
+[projects."/Users/tibger01/tmp/wezterm"]
+trust_level = "trusted"
+
+[projects."/Users/tibger01/Library/CloudStorage/OneDrive-Arm/Documents 1/Codex/2026-09-04/i-n"]
+trust_level = "trusted"
+
+[projects."/Users/tibger01/Library/CloudStorage/OneDrive-Arm/Documents 1/Codex/2026-09-04/cod"]
+trust_level = "trusted"
+
+[projects."/Users/tibger01/Library/CloudStorage/OneDrive-Arm/Documents 1/Codex/2026-09-04/how"]
+trust_level = "trusted"
+
+[projects."/Users/tibger01/Library/CloudStorage/OneDrive-Arm/Documents 1/Codex/2026-09-04/codex-config-audit"]
+trust_level = "trusted"
+
+[projects."/Users/tibger01/Projects/Fornjot"]
+trust_level = "trusted"
+
+[notice.model_migrations]
+"gpt-5.2-codex" = "gpt-5.4"
+
+[tui]
+raw_output_mode = true
+
+[tui.model_availability_nux]
+"gpt-5.6-sol" = 4
+
+[mcp_servers.speculus]
+url = "https://speculus.arm.com/mcp"
+startup_timeout_sec = 30.0
+tool_timeout_sec = 300.0
+
+[mcp_servers.speculus.tools.search]
+approval_mode = "approve"
+
+[mcp_servers.node_repl]
+args = []
+command = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+startup_timeout_sec = 120
+
+[mcp_servers.node_repl.env]
+NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
+NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
+NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
+NODE_REPL_TRUSTED_CODE_PATHS = "/Users/tibger01/.codex:/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
+CODEX_HOME = "/Users/tibger01/.codex"
+BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
+BROWSER_USE_TINYSKY_ENABLED = "1"
+NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = ""
+NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = ""
+NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = ""
+BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
+BROWSER_USE_CODEX_APP_VERSION = "26.901.41600"
+NODE_REPL_TRUSTED_SERVICES = '{"browser":"/Users/tibger01/.codex/plugins/cache/openai-bundled/browser/26.901.41600/scripts/browser-service.mjs","sky":"@oai/sky/service"}'
+SKY_CUA_SERVICE_PATH = "/Users/tibger01/.codex/computer-use/Codex Computer Use.app"
+CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
+
+[mcp_servers.confluence-mcp-readonly]
+url = "https://mcp-readonly.confluence.arm.com/mcp"
+
+[mcp_servers.jira-mcp-readonly]
+url = "https://mcp-readonly.jira.arm.com/mcp"
+
+[mcp_servers.computer-use]
+command = "./Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient"
+args = ["mcp"]
+cwd = "."
+enabled = false
+
+[marketplaces.openai-bundled]
+source_type = "local"
+source = "/Users/tibger01/.codex/.tmp/bundled-marketplaces/openai-bundled"
+
+[marketplaces.openai-primary-runtime]
+source_type = "local"
+source = "/Users/tibger01/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
+
+[plugins."visualize@openai-bundled"]
+enabled = true
+
+[plugins."browser@openai-bundled"]
+enabled = true
+
+[plugins."documents@openai-primary-runtime"]
+enabled = true
+
+[plugins."pdf@openai-primary-runtime"]
+enabled = true
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = true
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = true
+
+[plugins."template-creator@openai-primary-runtime"]
+enabled = true
+
+[plugins."codex-app-tools@openai-bundled"]
+enabled = true
+
+[plugins."unified-computer-use@openai-bundled"]
+enabled = true
+
+[plugins."computer-use@openai-bundled"]
+enabled = true
+
+[features]
+js_repl = false
+
+[shell_environment_policy.set]
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "e7fc907079d6797973cb63f97d2562c965aad8d33f52fb726005bf6702f30afc"
+
+[desktop]
+conversationDetailMode = "STEPS_COMMANDS"
+ambient-suggestions-enabled = true
+followUpQueueMode = "queue"
+
+[desktop.custom_file_handlers.herdr-nvim]
+label = "Herdr Neovim"
+icon = "/Applications/WezTerm.app/Contents/Resources/ApplicationStub.icns"
+command = "/Users/tibger01/.local/bin/aarch64/python3.12"
+args = ["/Users/tibger01/.config/codex/bin/open-in-herdr-nvim"]
+input = "json_argument"
+supports_ssh = false
+
+[agents]
+max_concurrent_threads_per_session = 5
+
+[hooks.state]
+
+[hooks.state."/Users/tibger01/.codex/hooks.json:session_start:0:0"]
+trusted_hash = "sha256:aad339ae524443dda33d49fe4dea3a3dad46437d09bc9eb70f83990c8eed8bbf"
