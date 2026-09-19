@@ -92,3 +92,11 @@ function h() {
   "$@" --help 2>&1 | bat --plain --language=help
 }
 
+function docker-make() {
+  command docker run --rm --platform linux/arm64 \
+    --user "$(id -u):$(id -g)" \
+    -v "$PWD:/memsys_docs" \
+    -w /memsys_docs \
+    memsys_docs:1.0 \
+    make "$@"
+}
