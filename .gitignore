@@ -26,3 +26,5 @@ tigervnc/
 wezterm/wezterm-session-manager/
 xfce4/
 zshrc/*
+.codex/**
+!.codex/config.toml.tmpl
