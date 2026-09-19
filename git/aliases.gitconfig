@@ -1,0 +1,28 @@
+# Shared aliases exported from the existing Git configuration.
+# rbim uses --rebase-merges, the current alternative to --preserve-merges.
+[alias]
+	st = status
+	ci = commit
+	cam = commit -a -m
+	cb = checkout -b
+	br = branch
+	co = checkout
+	rbi = rebase --interactive
+	rbim = rebase --interactive --rebase-merges
+	cp = cherry-pick -x
+	lol = log --graph --decorate --pretty=oneline --abbrev-commit
+	lol1 = log --graph --decorate --pretty=oneline --abbrev-commit -1
+	ls = log --graph --decorate --all --name-status --oneline
+	ll = log --graph --decorate --all --pretty=format:'%C(auto)%h %C(bold blue)%an%C(reset) %s %C(dim white)%d'
+	lds = log --pretty=format:%C(yellow)%h\\ %ad%Cred%d\\ %Creset%s%Cblue\\ [%cn] --decorate --date=short
+	ld = log --pretty=format:%C(yellow)%h\\ %ad%Cred%d\\ %Creset%s%Cblue\\ [%cn] --decorate --date=relative
+	filelog = log -u
+	fl = log -u
+	dl = !git ll -1
+	dlc = diff --cached HEAD^
+	la = !git config -l | grep alias | cut -c 7-
+	unstage = reset HEAD --
+	lgt = log --oneline --graph --decorate --tags
+	lga = log --oneline --graph --decorate --all
+	lf = log --graph --decorate --all --name-status --oneline
+	suno = status -uno --ignore-submodules=all

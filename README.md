@@ -19,6 +19,7 @@ This README documents the tracked directories that are **not** listed in the roo
 - [aerospace](#aerospace)
 - [borders](#borders)
 - [fzf](#fzf)
+- [git](#git)
 - [p10k](#p10k)
 - [tmux](#tmux)
 - [wezterm](#wezterm)
@@ -45,6 +46,7 @@ The current tracked tree is small and focused. At the time of writing, Git track
 - `aerospace/`
 - `borders/`
 - `fzf/`
+- `git/aliases.gitconfig` and `git/install-aliases.sh`
 - `p10k/`
 - `tmux/`
 - `wezterm/`
@@ -59,7 +61,6 @@ Only the non-ignored top-level directories get dedicated sections below.
 The root `.gitignore` excludes several directories, so they are not described in detail here:
 
 - `arm-eap/`
-- `git/`
 - `github-copilot/`
 - `karabiner/`
 - `nvim/`
@@ -146,6 +147,21 @@ This file is a bootstrap fragment rather than a full `fzf` configuration. It:
 - loads the standard `fzf` key bindings
 
 The directory exists to keep fuzzy-finder setup modular instead of embedding it directly into the main shell config.
+
+## git
+
+`git/aliases.gitconfig` contains the shared Git aliases. To install them on
+another machine, clone this repository and run from its root:
+
+```sh
+./git/install-aliases.sh --dry-run
+./git/install-aliases.sh
+```
+
+The installer requires Bash and Git. It replaces global aliases with matching
+names, preserves unrelated settings and aliases, and is safe to rerun. It copies
+the values, so moving the repository afterward does not break the aliases.
+The `rbim` alias uses the current `--rebase-merges` option.
 
 ## p10k
 

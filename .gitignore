@@ -9,7 +9,9 @@ codex/
 dconf/
 enchant/
 fish/
-git/
+git/*
+!git/aliases.gitconfig
+!git/install-aliases.sh
 github-copilot/
 gpuhwdevcontainer/
 gramps/
