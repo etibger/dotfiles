@@ -137,7 +137,10 @@ def check_checkout_tools(source, env):
         )]
     if not rust_ok or missing_components:
         detail = "is missing or unusable" if not rust_ok else "is missing components: " + ", ".join(missing_components)
-        command = ["rustup", "toolchain", "install", channel, "--profile", "minimal"]
+        # CARGO_HOME is a build cache, not the location of the rustup executable.
+        # Its self-update step would incorrectly look for CARGO_HOME/bin/rustup.
+        command = ["rustup", "toolchain", "install", channel, "--profile", "minimal",
+                   "--no-self-update"]
         for component in components:
             command.extend(["--component", component])
         settings = " ".join(f"{key}={shlex.quote(env[key])}" for key in
@@ -313,6 +316,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, epilog=(
         "Checks build prerequisites and prints installation instructions for missing tools. "
         "Clones herdrdev/herdr if the checkout directory is missing. "
+        "Checks its pinned Rust/Zig toolchains before fetching updates or creating a build worktree. "
         "Fetches origin/master into a separate worktree; your checkout is preserved. "
         "Reuses private/tmp/to_persist/herdr-pr4281 build caches. "
         "Keeps logs and failed worktrees under private/tmp/to_persist/herdr-update. "
@@ -343,6 +347,8 @@ def main():
     cache = repo / "private/tmp/to_persist/herdr-pr4281"
     state = repo / "private/tmp/to_persist/herdr-update"
     state.mkdir(parents=True, exist_ok=True)
+    # The preflight installation command must use the same directories as the build.
+    env["TMPDIR"] = str(state)
     for key, name in (("CARGO_HOME", "cargo"), ("RUSTUP_HOME", "rustup"),
                       ("CARGO_TARGET_DIR", "target"), ("ZIG_GLOBAL_CACHE_DIR", "zig-global"),
                       ("ZIG_LOCAL_CACHE_DIR", "zig-local")):
@@ -355,6 +361,9 @@ def main():
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
             parser.error("Another local Herdr update is already running")
+        say("Checking pinned Rust/Zig prerequisites before fetching updates...")
+        check_checkout_tools(repo, env)
+        # update() rechecks the fetched, patched source in case its requirements changed.
         update(args, repo, state, env)
 
 
