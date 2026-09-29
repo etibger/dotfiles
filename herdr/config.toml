@@ -70,6 +70,14 @@ description = "pick pane in current tab"
 width = "75%"
 height = "65%"
 
+[[keys.command]]
+key = "prefix+shift+f"
+type = "popup"
+command = "/Users/tibger01/Projects/personal-tools/bin/repo-status --fzf-inner"
+description = "browse repository status"
+width = "85%"
+height = "65%"
+
 # Edit config in a popup (tmux: prefix+alt+m)
 [[keys.command]]
 key = "prefix+alt+m"
