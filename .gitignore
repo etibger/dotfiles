@@ -30,3 +30,14 @@ xfce4/
 zshrc/*
 .codex/**
 !.codex/config.toml.tmpl
+
+# Application state and local configuration
+/cloudbees-cli/config.toml
+/configstore/update-notifier-npm-check.json
+/glab-cli/config.lock
+/glab-cli/config.yml
+/herdr/herdr.sock.agent
+/herdr/release-notes.json
+/herdr/session-snapshots/
+/homebrew/trust.json.lock
+/nvim.log
