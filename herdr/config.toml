@@ -49,8 +49,8 @@ tab_bar_right = [
 ]
 
 # Go to popup (Ctrl+O, or Ctrl+B then G).
-# All five settings below currently retain their defaults. Uncomment ONE rows
-# example per section to customize it; leave the other rows examples commented.
+# Detailed layouts are enabled below for all agents and workspaces.
+# Keep alternative rows examples commented; edit the active rows blocks to taste.
 # Edit with Ctrl+B then Alt+M. Close Go to, then Ctrl+B then R to reload.
 # From another terminal: herdr config check; herdr server reload-config
 
@@ -63,7 +63,19 @@ show_details = true
 show_meta = true
 
 [ui.goto.agents]
-# rows default: UNSET. Keep every rows example commented for the original layout.
+# Every built-in pane field, separated into readable lines. Optional custom
+# metadata appears only when reported; there is no wildcard for arbitrary keys.
+# Field colors: agent lavender, location gray/blue, title dimmed pink,
+# model cyan, reasoning yellow, and optional summary green.
+rows = [
+  ["state_icon", "state_text", { token = "agent", fg = "#cba6f7", bold = true }],
+  ["machine", { token = "workspace", fg = "#bac2de" }, { token = "tab", fg = "#89b4fa" }],
+  [{ token = "pane", fg = "#cdd6f4", bold = true }],
+  [{ token = "terminal_title_stripped", fg = "#f5c2e7", bold = false, dim = true }],
+  [{ token = "$model", fg = "#89dceb", bold = true }, { token = "$reasoning", fg = "#f9e2af", bold = true }],
+  [{ token = "$summary", fg = "#a6e3a1" }],
+]
+# rows default: UNSET. Remove/comment the active rows block to restore it.
 # There is no TOML null/unset value; rows = [] is NOT the default: it shows IDs.
 # Each outer array entry is a displayed line; inner entries are ordered tokens.
 # Maximum: 16 lines, 16 tokens per line. Repeated tokens are allowed.
@@ -133,7 +145,13 @@ show_meta = true
 # pi = []
 
 [ui.goto.spaces]
-# rows default: UNSET. Leave commented to retain the original workspace heading.
+# Every built-in workspace field, plus common optional workspace metadata.
+rows = [
+  ["state_icon", "state_text", "workspace"],
+  ["branch", "git_status"],
+  ["$project", "$jj_status"],
+]
+# rows default: UNSET. Remove/comment the active rows block to restore it.
 # Set an array of token rows to customize it; [] deliberately shows workspace IDs.
 # All workspace tokens:
 #   state_icon    current workspace state indicator
