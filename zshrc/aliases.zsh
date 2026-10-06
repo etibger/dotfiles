@@ -41,25 +41,6 @@ function _herdr_general() (
 )
 alias herdr-general='_herdr_general'
 
-if [[ "$OSTYPE" == darwin* ]]; then
-  function _arm_tabs() (
-    local herdr_bin="$HOME/.local/bin/herdr-latest-build"
-    [[ -x "$herdr_bin" ]] || herdr_bin=$(command -v herdr) || return
-    local sessions_json
-    local -a session_names
-    unset HERDR_SOCKET_PATH HERDR_CLIENT_SOCKET_PATH HERDR_SESSION
-    unset HERDR_PANE_ID HERDR_ENV
-    sessions_json=$("$herdr_bin" session list --json) || return
-    session_names=("${(@f)$(print -r -- "$sessions_json" | jq -r '.sessions[] | select(.name | startswith("general")) | .name')}")
-    if (( ${#session_names} != 1 )) || [[ -z "$session_names[1]" ]]; then
-      print -u2 -- "Expected one Herdr session starting with general; found ${#session_names}."
-      return 1
-    fi
-    "$herdr_bin" session attach "$session_names[1]"
-  )
-  alias arm-tabs='_arm_tabs'
-fi
-
 function h() {
   "$@" --help 2>&1 | bat --plain --language=help
 }
