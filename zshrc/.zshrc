@@ -107,3 +107,5 @@ fi
 if (( $+commands[starship] )); then
   eval "$(starship init zsh)"
 fi
+
+eval "$(zoxide init zsh)"

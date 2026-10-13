@@ -21,7 +21,7 @@ function _herdr_general() (
   unset HERDR_SOCKET_PATH HERDR_CLIENT_SOCKET_PATH HERDR_SESSION
   unset HERDR_PANE_ID HERDR_ENV
 
-  HERDR_STARTUP_CWD="$PWD" "$herdr_bin" --session "$session_name" server </dev/null &
+  HERDR_STARTUP_CWD="$PWD" "$herdr_bin" --session "$session_name" server </dev/null >/dev/null 2>&1 &
   server_pid=$!
   for attempt in {1..100}; do
     if "$herdr_bin" --session "$session_name" workspace rename w1 general >/dev/null 2>&1; then

@@ -40,7 +40,7 @@ rename_tab = "prefix+,"
 mouse_capture = true
 
 # Keep prefix+p as expanded/compact; prefix+shift+p toggles compact/hidden.
-sidebar_collapsed_mode = "compact"
+sidebar_collapsed_mode = "hidden"
 
 # Top-row system load, refreshed every two seconds
 tab_bar_position = "top"
