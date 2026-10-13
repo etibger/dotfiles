@@ -6,6 +6,9 @@ alias rebuild_nvim='make CMAKE_BUILD_TYPE=Release CMAKE_INSTALL_PREFIX="$HOME" i
 alias git-fsmonitor-restart='/Users/tibger01/.codex/hooks/git-fsmonitor.sh restart'
 alias codex-working='codex --no-daemon --no-alt-screen'
 
+# Fast-forward local main from GitHub, then mirror it to Gitea.
+alias harmonize-gitea='git fetch origin gitea && git switch main && git merge --ff-only origin/main && git push gitea main'
+
 # Prefer the locally built Herdr with the copy-mode fix when installed.
 if [[ -x "$HOME/.local/bin/herdr-latest-build" ]]; then
   alias herdr="$HOME/.local/bin/herdr-latest-build"
