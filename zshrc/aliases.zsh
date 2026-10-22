@@ -54,7 +54,12 @@ if [[ "$OSTYPE" == darwin* ]]; then
     unset HERDR_PANE_ID HERDR_ENV
     sessions_json=$("$herdr_bin" session list --json) || return
     session_names=("${(@f)$(print -r -- "$sessions_json" | jq -r '.sessions[] | select(.name | startswith("general")) | .name')}")
-    if (( ${#session_names} != 1 )) || [[ -z "$session_names[1]" ]]; then
+    if (( ${#session_names} == 0 )) || [[ -z "$session_names[1]" ]]; then
+      print -u2 -- 'No general Herdr session was found; starting one.'
+      _herdr_general
+      return $?
+    fi
+    if (( ${#session_names} != 1 )); then
       print -u2 -- "Expected one Herdr session starting with general; found ${#session_names}."
       return 1
     fi
