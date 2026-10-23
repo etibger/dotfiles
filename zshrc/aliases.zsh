@@ -5,6 +5,7 @@ alias brew_up='brew update && brew upgrade && brew upgrade --cask && brew cleanu
 alias rebuild_nvim='make CMAKE_BUILD_TYPE=Release CMAKE_INSTALL_PREFIX="$HOME" install'
 alias git-fsmonitor-restart='/Users/tibger01/.codex/hooks/git-fsmonitor.sh restart'
 alias codex-working='codex --no-daemon --no-alt-screen'
+alias start_devcon='../../gpu-devcontainer/docker-run-custom tibger01'
 
 # Fast-forward local main from GitHub, then mirror it to Gitea.
 alias harmonize-gitea='git fetch origin gitea && git switch main && git merge --ff-only origin/main && git push gitea main'
