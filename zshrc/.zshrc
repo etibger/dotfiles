@@ -24,8 +24,8 @@ fpath=(/opt/homebrew/share/zsh/site-functions $fpath)
 
 export WEZTERM_THEME=nord
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-export TCL_LIBRARY=/opt/homebrew/opt/tcl-tk/lib/tcl9.0
-export TK_LIBRARY=/opt/homebrew/opt/tcl-tk/lib/tk9.0
+# Let Tcl/Tk locate the libraries matching the installed interpreter.
+unset TCL_LIBRARY TK_LIBRARY
 export KEYTIMEOUT=1
 export CARAPACE_BRIDGES=zsh,fish,bash,inshellisense
 export FZF_CTRL_R_OPTS='--tmux center,80%,60%'
