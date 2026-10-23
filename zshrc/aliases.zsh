@@ -49,22 +49,30 @@ if [[ "$OSTYPE" == darwin* ]]; then
   function _herdr_attach_general() (
     local herdr_bin="$HOME/.local/bin/herdr-latest-build"
     [[ -x "$herdr_bin" ]] || herdr_bin=$(command -v herdr) || return
-    local sessions_json
+    local sessions_json matching_names session_name
     local -a session_names
     unset HERDR_SOCKET_PATH HERDR_CLIENT_SOCKET_PATH HERDR_SESSION
     unset HERDR_PANE_ID HERDR_ENV
     sessions_json=$("$herdr_bin" session list --json) || return
-    session_names=("${(@f)$(print -r -- "$sessions_json" | jq -r '.sessions[] | select(.name | startswith("general")) | .name')}")
-    if (( ${#session_names} == 0 )) || [[ -z "$session_names[1]" ]]; then
+    matching_names=$(print -r -- "$sessions_json" | jq -r '.sessions[] | select(.name | startswith("general")) | .name') || return
+    if [[ -z "$matching_names" ]]; then
       print -u2 -- 'No general Herdr session was found; starting one.'
       _herdr_general
       return $?
     fi
-    if (( ${#session_names} != 1 )); then
-      print -u2 -- "Expected one Herdr session starting with general; found ${#session_names}."
-      return 1
+    session_names=("${(@f)matching_names}")
+    if (( ${#session_names} == 1 )); then
+      session_name="$session_names[1]"
+    else
+      local PS3='Herdr session (Ctrl-D to cancel): '
+      print -u2 -- 'Several general Herdr sessions are available; choose one to attach:'
+      select session_name in "${session_names[@]}"; do
+        [[ -n "$session_name" ]] && break
+        print -u2 -- 'Enter a session number from the list.'
+      done
+      [[ -n "$session_name" ]] || return 1
     fi
-    "$herdr_bin" session attach "$session_names[1]"
+    "$herdr_bin" session attach "$session_name"
   )
 fi
 
