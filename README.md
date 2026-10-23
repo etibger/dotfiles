@@ -243,3 +243,42 @@ The main config defines a terminal workflow that mirrors tmux in several places:
 The tab formatter adds host or environment icons based on tab titles, which makes the tab bar function as a lightweight session/dashboard view.
 
 `events.lua` currently handles GUI startup by spawning and maximizing a window. The keymap in `config.lua` also emits session-related events such as `save_session`, `load_session`, and `restore_session`, but handlers for those events are not present in the tracked files here, so that part of the workflow likely depends on local files or ignored add-ons.
+
+### macOS Setup: Enable Key Repeat
+
+On each new Mac installation, disable the press-and-hold accent menu for WezTerm
+so holding keys such as `j` or `k` repeats them, including in copy mode and Herdr
+running inside WezTerm:
+
+```sh
+defaults write com.github.wez.wezterm ApplePressAndHoldEnabled -bool false
+```
+
+- `defaults write` saves a macOS preference for the current user.
+- `com.github.wez.wezterm` is WezTerm's bundle identifier, used as its preference
+  domain. It follows reverse-domain naming conventions; it is an app identifier,
+  not a website or network request.
+- `ApplePressAndHoldEnabled` controls the press-and-hold accent menu.
+- `-bool false` stores the value as Boolean false, disabling that menu for WezTerm
+  and allowing held keys to repeat. Other apps keep their existing behavior.
+
+This preference lives in macOS, outside the WezTerm Lua configuration, so copying
+these dotfiles to a new Mac does not apply it automatically.
+
+Fully quit and reopen WezTerm after changing the preference. In this setup,
+`Cmd+Q` is disabled; use `Ctrl+Shift+Q`. Closing only a tab or reloading the Lua
+configuration does not restart the application. If the menu still appears after
+relaunching, log out of macOS and back in.
+
+Verify the saved value (`0` means false):
+
+```sh
+defaults read com.github.wez.wezterm ApplePressAndHoldEnabled
+```
+
+To remove the override and return to the inherited macOS behavior, run this and
+restart WezTerm:
+
+```sh
+defaults delete com.github.wez.wezterm ApplePressAndHoldEnabled
+```
