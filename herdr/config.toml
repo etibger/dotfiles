@@ -42,11 +42,9 @@ mouse_capture = true
 # Keep prefix+p as expanded/compact; prefix+shift+p toggles compact/hidden.
 sidebar_collapsed_mode = "hidden"
 
-# Top-row system load, refreshed every two seconds
+# Keep the top row available for tab labels.
 tab_bar_position = "top"
-tab_bar_right = [
-  { type = "command", command = "/bin/sh ~/.config/herdr/status-system-load.sh", interval_seconds = 2, timeout_seconds = 2 },
-]
+tab_bar_right = []
 
 # Go to popup (Ctrl+O, or Ctrl+B then G).
 # Detailed layouts are enabled below for all agents and workspaces.
