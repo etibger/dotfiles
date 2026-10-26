@@ -59,6 +59,41 @@ function harmonize-gitea() {
   git push gitea "$branch"
 }
 
+# Dry-run GitHub issues from etibger/agentic_tools into the matching Gitea repository.
+function harmonize-github-issues() {
+  local token script rc
+
+  if (( $# > 1 )) || { (( $# == 1 )) && [[ "$1" != "--apply" && "$1" != "--help" ]]; }; then
+    print -u2 -- 'Usage: harmonize-github-issues [--apply|--help]'
+    return 2
+  fi
+
+  script="$HOME/.config/zsh/harmonize_github_issues.py"
+  if [[ ! -f "$script" ]]; then
+    print -u2 -- "harmonize-github-issues: implementation not found: $script"
+    return 1
+  fi
+
+  if [[ "${1-}" == "--help" ]]; then
+    python3 "$script" --help
+    return $?
+  fi
+
+  token=$(security find-generic-password -a "$USER" -s gitea-issues-sync -w 2>/dev/null) || {
+    print -u2 -- 'harmonize-github-issues: Keychain item gitea-issues-sync was not found for this user.'
+    return 1
+  }
+  if [[ -z "$token" ]]; then
+    print -u2 -- 'harmonize-github-issues: Keychain item gitea-issues-sync is empty.'
+    return 1
+  fi
+
+  GITEA_TOKEN="$token" python3 "$script" "$@"
+  rc=$?
+  unset token
+  return $rc
+}
+
 # Push a local branch to both remotes only when their starting tips match.
 function publish-both() {
   local branch=${1:-main}
