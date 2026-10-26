@@ -7,8 +7,127 @@ alias git-fsmonitor-restart='/Users/tibger01/.codex/hooks/git-fsmonitor.sh resta
 alias codex-working='codex --no-daemon --no-alt-screen'
 alias start_devcon='../../gpu-devcontainer/docker-run-custom tibger01'
 
-# Fast-forward local main from GitHub, then mirror it to Gitea.
-alias harmonize-gitea='git fetch origin gitea && git switch main && git merge --ff-only origin/main && git push gitea main'
+# Fast-forward a branch from GitHub, then mirror it to Gitea.
+function harmonize-gitea() {
+  local branch=${1:-main}
+  local origin_ref="refs/remotes/origin/$branch"
+  local gitea_ref="refs/remotes/gitea/$branch"
+
+  if (( $# > 1 )); then
+    print -u2 -- "Usage: harmonize-gitea [branch]"
+    return 2
+  fi
+  if ! git check-ref-format --branch "$branch" >/dev/null 2>&1; then
+    print -u2 -- "harmonize-gitea: invalid branch name: $branch"
+    return 2
+  fi
+  if ! git remote get-url origin >/dev/null 2>&1 || ! git remote get-url gitea >/dev/null 2>&1; then
+    print -u2 -- 'harmonize-gitea: expected remotes named origin and gitea'
+    return 1
+  fi
+
+  print -r -- "Fetching '$branch' from origin and gitea..."
+  git fetch origin "$branch:$origin_ref" || {
+    print -u2 -- "harmonize-gitea: could not fetch '$branch' from origin; stopping."
+    return 1
+  }
+  git fetch gitea "$branch:$gitea_ref" || {
+    print -u2 -- "harmonize-gitea: could not fetch '$branch' from gitea; stopping."
+    return 1
+  }
+
+  if ! git show-ref --verify --quiet "$origin_ref"; then
+    print -u2 -- "harmonize-gitea: origin has no branch '$branch'; stopping."
+    return 1
+  fi
+  if ! git show-ref --verify --quiet "$gitea_ref"; then
+    print -u2 -- "harmonize-gitea: gitea has no branch '$branch'; stopping."
+    return 1
+  fi
+  if ! git merge-base --is-ancestor "$gitea_ref" "$origin_ref"; then
+    print -u2 -- "harmonize-gitea: gitea/$branch is not an ancestor of origin/$branch."
+    print -u2 -- 'The remote histories differ or gitea has commits missing from origin; no push was made.'
+    return 1
+  fi
+
+  print -r -- "Remote histories are compatible: gitea/$branch can fast-forward to origin/$branch."
+  git switch "$branch" || return
+  git merge --ff-only "$origin_ref" || {
+    print -u2 -- "harmonize-gitea: local '$branch' cannot fast-forward to origin/$branch; no push was made."
+    return 1
+  }
+  git push gitea "$branch"
+}
+
+# Push a local branch to both remotes only when their starting tips match.
+function publish-both() {
+  local branch=${1:-main}
+  local local_ref="refs/heads/$branch"
+  local origin_ref="refs/remotes/origin/$branch"
+  local gitea_ref="refs/remotes/gitea/$branch"
+  local origin_tip gitea_tip local_tip
+
+  if (( $# > 1 )); then
+    print -u2 -- "Usage: publish-both [branch]"
+    return 2
+  fi
+  if ! git check-ref-format --branch "$branch" >/dev/null 2>&1; then
+    print -u2 -- "publish-both: invalid branch name: $branch"
+    return 2
+  fi
+  if ! git remote get-url origin >/dev/null 2>&1 || ! git remote get-url gitea >/dev/null 2>&1; then
+    print -u2 -- 'publish-both: expected remotes named origin and gitea'
+    return 1
+  fi
+  if ! git show-ref --verify --quiet "$local_ref"; then
+    print -u2 -- "publish-both: local branch '$branch' does not exist; nothing was pushed."
+    return 1
+  fi
+
+  print -r -- "Fetching '$branch' from origin and gitea..."
+  git fetch origin "$branch:$origin_ref" || {
+    print -u2 -- "publish-both: could not fetch '$branch' from origin; nothing was pushed."
+    return 1
+  }
+  git fetch gitea "$branch:$gitea_ref" || {
+    print -u2 -- "publish-both: could not fetch '$branch' from gitea; nothing was pushed."
+    return 1
+  }
+
+  origin_tip=$(git rev-parse --verify "$origin_ref^{commit}") || return 1
+  gitea_tip=$(git rev-parse --verify "$gitea_ref^{commit}") || return 1
+  local_tip=$(git rev-parse --verify "$local_ref^{commit}") || return 1
+
+  if [[ "$origin_tip" != "$gitea_tip" ]]; then
+    print -u2 -- "publish-both: origin/$branch and gitea/$branch have different tips."
+    print -u2 -- "origin: $origin_tip"
+    print -u2 -- "gitea:  $gitea_tip"
+    print -u2 -- 'No push was made; inspect and reconcile the remote branches first.'
+    return 1
+  fi
+  if ! git merge-base --is-ancestor "$origin_ref" "$local_ref"; then
+    print -u2 -- "publish-both: local '$branch' is not a fast-forward of both remote branches."
+    print -u2 -- 'No push was made; inspect the local and remote histories first.'
+    return 1
+  fi
+  if [[ "$local_tip" == "$origin_tip" ]]; then
+    print -r -- "publish-both: local '$branch' already matches both remotes; nothing to push."
+    return 0
+  fi
+
+  print -r -- "Checks passed: both remotes are at $origin_tip and local '$branch' can fast-forward them to $local_tip."
+  print -r -- 'Pushing to origin...'
+  git push origin "${local_ref}:refs/heads/${branch}" || {
+    print -u2 -- 'publish-both: push to origin failed; gitea was not pushed.'
+    return 1
+  }
+  print -r -- 'Pushing to gitea...'
+  git push gitea "${local_ref}:refs/heads/${branch}" || {
+    print -u2 -- 'publish-both: push to gitea failed after origin succeeded; the remotes may now differ.'
+    return 1
+  }
+  print -r -- "publish-both: pushed '$branch' to origin and gitea."
+}
 
 # Prefer the locally built Herdr with the copy-mode fix when installed.
 if [[ -x "$HOME/.local/bin/herdr-latest-build" ]]; then
