@@ -36,9 +36,6 @@ $line_break$character"""
 
 palette = 'gruvbox_dark'
 
-[profiles]
-transient = '[❯](bold green)'
-
 [palettes.gruvbox_dark]
 color_fg0 = '#fbf1c7'
 color_bg1 = '#3c3836'

@@ -106,28 +106,6 @@ fi
 
 if (( $+commands[starship] )); then
   eval "$(starship init zsh)"
-
-  # Keep Starship's full prompt while editing, then render a compact prompt
-  # on the line that was just accepted.
-  STARSHIP_FULL_PROMPT=$PROMPT
-  STARSHIP_FULL_RPROMPT=$RPROMPT
-  STARSHIP_TRANSIENT_PROMPT=${PROMPT/ prompt --terminal-width/ prompt --profile=transient --terminal-width}
-
-  transient-prompt-finish() {
-    [[ -n $BUFFER ]] || return
-    PROMPT=$STARSHIP_TRANSIENT_PROMPT
-    RPROMPT=''
-    zle .reset-prompt
-  }
-
-  transient-prompt-restore() {
-    PROMPT=$STARSHIP_FULL_PROMPT
-    RPROMPT=$STARSHIP_FULL_RPROMPT
-  }
-
-  autoload -Uz add-zle-hook-widget add-zsh-hook
-  add-zle-hook-widget zle-line-finish transient-prompt-finish
-  add-zsh-hook precmd transient-prompt-restore
 fi
 
 eval "$(zoxide init zsh)"
