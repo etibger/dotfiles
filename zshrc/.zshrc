@@ -24,6 +24,7 @@ fpath=(/opt/homebrew/share/zsh/site-functions $fpath)
 
 export WEZTERM_THEME=nord
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+export EZA_CONFIG_DIR="${EZA_CONFIG_DIR:-$XDG_CONFIG_HOME/eza}"
 # Let Tcl/Tk locate the libraries matching the installed interpreter.
 unset TCL_LIBRARY TK_LIBRARY
 export KEYTIMEOUT=1
