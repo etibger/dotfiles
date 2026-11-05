@@ -10,25 +10,26 @@ alias start_devcon='../../gpu-devcontainer/docker-run-custom tibger01'
 # Fast-forward a branch from GitHub, then mirror it to Gitea.
 function harmonize-gitea() {
   local branch=${1:-main}
-  local origin_ref="refs/remotes/origin/$branch"
+  local source_remote=${2:-origin}
+  local source_ref="refs/remotes/$source_remote/$branch"
   local gitea_ref="refs/remotes/gitea/$branch"
 
-  if (( $# > 1 )); then
-    print -u2 -- "Usage: harmonize-gitea [branch]"
+  if (( $# > 2 )); then
+    print -u2 -- "Usage: harmonize-gitea [branch] [source-remote]"
     return 2
   fi
   if ! git check-ref-format --branch "$branch" >/dev/null 2>&1; then
     print -u2 -- "harmonize-gitea: invalid branch name: $branch"
     return 2
   fi
-  if ! git remote get-url origin >/dev/null 2>&1 || ! git remote get-url gitea >/dev/null 2>&1; then
-    print -u2 -- 'harmonize-gitea: expected remotes named origin and gitea'
+  if ! git remote get-url "$source_remote" >/dev/null 2>&1 || ! git remote get-url gitea >/dev/null 2>&1; then
+    print -u2 -- "harmonize-gitea: expected remotes named '$source_remote' and 'gitea'"
     return 1
   fi
 
-  print -r -- "Fetching '$branch' from origin and gitea..."
-  git fetch origin "$branch:$origin_ref" || {
-    print -u2 -- "harmonize-gitea: could not fetch '$branch' from origin; stopping."
+  print -r -- "Fetching '$branch' from '$source_remote' and gitea..."
+  git fetch "$source_remote" "$branch:$source_ref" || {
+    print -u2 -- "harmonize-gitea: could not fetch '$branch' from '$source_remote'; stopping."
     return 1
   }
   git fetch gitea "$branch:$gitea_ref" || {
@@ -36,24 +37,24 @@ function harmonize-gitea() {
     return 1
   }
 
-  if ! git show-ref --verify --quiet "$origin_ref"; then
-    print -u2 -- "harmonize-gitea: origin has no branch '$branch'; stopping."
+  if ! git show-ref --verify --quiet "$source_ref"; then
+    print -u2 -- "harmonize-gitea: '$source_remote' has no branch '$branch'; stopping."
     return 1
   fi
   if ! git show-ref --verify --quiet "$gitea_ref"; then
     print -u2 -- "harmonize-gitea: gitea has no branch '$branch'; stopping."
     return 1
   fi
-  if ! git merge-base --is-ancestor "$gitea_ref" "$origin_ref"; then
-    print -u2 -- "harmonize-gitea: gitea/$branch is not an ancestor of origin/$branch."
+  if ! git merge-base --is-ancestor "$gitea_ref" "$source_ref"; then
+    print -u2 -- "harmonize-gitea: gitea/$branch is not an ancestor of $source_remote/$branch."
     print -u2 -- 'The remote histories differ or gitea has commits missing from origin; no push was made.'
     return 1
   fi
 
-  print -r -- "Remote histories are compatible: gitea/$branch can fast-forward to origin/$branch."
+  print -r -- "Remote histories are compatible: gitea/$branch can fast-forward to $source_remote/$branch."
   git switch "$branch" || return
-  git merge --ff-only "$origin_ref" || {
-    print -u2 -- "harmonize-gitea: local '$branch' cannot fast-forward to origin/$branch; no push was made."
+  git merge --ff-only "$source_ref" || {
+    print -u2 -- "harmonize-gitea: local '$branch' cannot fast-forward to $source_remote/$branch; no push was made."
     return 1
   }
   git push gitea "$branch"
