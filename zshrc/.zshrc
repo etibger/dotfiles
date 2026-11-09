@@ -34,6 +34,8 @@ HISTFILE="$HOME/.zsh_history"
 HISTSIZE=10000
 SAVEHIST=10000
 unset LESS
+export EDITOR=nvim
+export VISUAL=nvim
 
 [[ -r "$HOME/.zshrc.secrets" ]] && source "$HOME/.zshrc.secrets"
 [[ -r "$HOME/.config/secrets/.secrets.zsh" ]] && source "$HOME/.config/secrets/.secrets.zsh"

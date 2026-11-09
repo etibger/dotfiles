@@ -1,1 +1,6 @@
 app.editor.external: f8
+tui.select.down: [down, j]
+tui.select.up: [up, k]
+tui.select.pageUp: [pageUp, ctrl+u]
+tui.select.pageDown: [pageDown, ctrl+d]
+app.tools.expand: f9
