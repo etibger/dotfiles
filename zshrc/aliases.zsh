@@ -5,6 +5,7 @@ alias brew_up='brew update && brew upgrade && brew upgrade --cask && brew cleanu
 alias rebuild_nvim='make CMAKE_BUILD_TYPE=Release CMAKE_INSTALL_PREFIX="$HOME" install'
 alias git-fsmonitor-restart='/Users/tibger01/.codex/hooks/git-fsmonitor.sh restart'
 alias codex-working='codex --no-daemon --no-alt-screen'
+alias omp-working='NODE_USE_SYSTEM_CA=1 omp --model arm-proxy/gpt-6.1-sol'
 alias start_devcon='../../gpu-devcontainer/docker-run-custom tibger01'
 
 # Fast-forward a branch from GitHub, then mirror it to Gitea.

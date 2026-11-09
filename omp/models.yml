@@ -1,0 +1,13 @@
+providers:
+  arm-proxy:
+    baseUrl: https://openai-api-proxy.geo.arm.com/api/providers/openai/v1
+    api: openai-responses
+    apiKey: OPENAI_API_KEY
+    authHeader: true
+    models:
+      - id: gpt-6.1-sol
+        name: GPT-6.1 Sol via Arm
+        reasoning: true
+        input: [text, image]
+        contextWindow: 128000
+        maxTokens: 16384
